@@ -27,7 +27,7 @@ private:
     QVector<Remapping *> remappings;
     int icRemapping;
 
-    QVector<ColorCycling *> colorcyclings;
+    QVector<ColorCycling *> colorCyclings;
     int icColorCycling;
 
 
@@ -37,11 +37,15 @@ private:
 public:
     static Data * getInstance();
 
-    void setGrp(Grp *);
-    void appendWpe(Wpe *);
-    void appendMapping (Mapping *);
-    void appendRemapping (Remapping *);
-    void appendColorCycling (ColorCycling *);
+    void setGrp(Grp *grp) {this->grp = grp;}
+    void appendWpe(Wpe *wpe) {wpes.append(wpe);}
+    void appendMapping (Mapping *map) {mappings.append(map);}
+    void appendRemapping (Remapping *rem) {remappings.append(rem);}
+    void appendColorCycling (ColorCycling *cc) {colorCyclings.append(cc);}
+    QVector<Wpe *> const &getWpes() const {return wpes;}
+    QVector<Mapping *> const &getMappings() const {return mappings;}
+    QVector<Remapping *> const &getRemappings() const {return remappings;}
+    QVector<ColorCycling *> const &getColorCyclings() const {return colorCyclings;}
 
 };
 
