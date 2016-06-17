@@ -1,5 +1,0 @@
-[
-	{"time_interval": 8, "low": 1, "high": 6},
-	{"time_interval": 8, "low": 7, "high": 13},
-	{"time_interval": 8, "low": 248, "high": 254},
-]

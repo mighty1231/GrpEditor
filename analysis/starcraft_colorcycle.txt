@@ -1,0 +1,78 @@
+Code section starts : 0x0041E900 push 80h
+             ends   : 0x0041E929 retn
+
+Code section includes:
+thiscall FUNC_41E7B0(arg0, arg1)
+struct obj_6CE2A0 {
+    char c0; // expect: onoff
+    char c1; // expect: period
+    char c2; // expect: current timer
+    char c3; // expect: lowindex
+    char c4;
+    char c5; // expect : highindex
+    char c6;
+    char c7;
+
+    int i8;  // zero for all types of map, but there is code to manage this
+    char ic;
+    char id;
+    char ie;
+    char if;
+}
+
+Code:
+int res; // count of lines.
+if ((res = obj_6CE2A0(0x6CE2A0)->FUNC_41E7B0(0, 0x80)) < 8) { // unsigned compare
+	(Obj_6CE2A0 + res)->FUNC_41E7B0(0, 0x100);
+}
+
+thiscall FUNC_41E7B0(this, arg0, arg1):
+char data[400];
+edi = 0;
+ebx = 0xFF;
+if (this->c1 != 0) {
+	while (arg0 < 8 && this->c3 <= arg1) { // loop at 41E7D0, breakpoint is 41E829
+		if ((this->c0 != 0) && --(this->c2) == 0) {
+			// 41E7EB
+			ecx = this->i8;
+			dl = this->c1;
+			this->c2 = dl; // copy!! period here.
+			if (this->i8 != 0) {
+				CALL 0041E4F0; // not reached for normal case
+			} else {
+				CALL 0041E4B0; // absorbs eax == (index of the structure(0 through 7))
+			}
+			// 41E804
+			if (this->c3 < ebx /* 0xFF */) {
+				ebx = this->c3;
+			}
+			if (this->c5 > edi /* 0x00 */) {
+				edi = this->c5;
+			}
+		}
+		// 0041E81B
+		arg0++;
+		if ((++this)->c1 == 0)
+			break;
+		}
+	}
+	// 41E829
+	if (edi >= ebx) { // signed
+		// Can't arrive here for normal loop
+	} else //41E861
+} else {
+	// 41E85E
+}
+
+/* manage update of current color cycle object
+ * COLORTABLE = array of int which located in 6CE320 */
+FUNC_41E4B0(/* hidden argument : this */) {
+	edi = COLORTABLE[this->c5];
+	FUNC_408FD0_MAYBE_MEMCPY(COLORTABLE+(this->c3+1), COLORTABLE+this->c3, (this->c5 - this->c3)*4);
+	COLORTABLE[this->c3] = edi;
+}
+
+/* special case */
+FUNC_41E4F0(/* hidden argument : this*/) {
+	// @TODO
+}

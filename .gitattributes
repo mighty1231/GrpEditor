@@ -1,0 +1,6 @@
+* text=auto
+
+*.wpe binary
+*.mapping binary
+*.remapping binary
+*.colorcycling binary
