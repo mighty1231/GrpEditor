@@ -8,8 +8,10 @@
 #include "grp.h"
 
 
-class Data
+class Data : public QObject
 {
+    Q_OBJECT
+
 private:
     static Data * instance;
 
@@ -42,11 +44,22 @@ public:
     void appendMapping (Mapping *map) {mappings.append(map);}
     void appendRemapping (Remapping *rem) {remappings.append(rem);}
     void appendColorCycling (ColorCycling *cc) {colorCyclings.append(cc);}
+
     QVector<Wpe *> const &getWpes() const {return wpes;}
     QVector<Mapping *> const &getMappings() const {return mappings;}
     QVector<Remapping *> const &getRemappings() const {return remappings;}
     QVector<ColorCycling *> const &getColorCyclings() const {return colorCyclings;}
 
+    int getWpeIndex () {return icWpe;}
+    int getMappingIndex () {return icMapping;}
+    int getRemappingIndex () {return icRemapping;}
+    int getColorCyclingIndex () {return icColorCycling;}
+
+public slots:
+    void setWpeIndex (int i) {icWpe = i;}
+    void setMappingIndex (int i) {icMapping = i;}
+    void setRemappingIndex (int i) {icRemapping = i;}
+    void setColorCyclingIndex (int i) {icColorCycling = i;}
 };
 
 #endif // DATA_H

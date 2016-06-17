@@ -2,6 +2,8 @@
 #define PALLETEWINDOW_H
 
 #include <QMainWindow>
+#include <QCloseEvent>
+#include "data.h"
 
 namespace Ui {
 class PalleteWindow;
@@ -15,10 +17,14 @@ public:
     explicit PalleteWindow(QWidget *parent = 0);
     ~PalleteWindow();
 
-
+signals:
+    void closing();
 
 private:
+    Data *data;
     Ui::PalleteWindow *ui;
+
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // PALLETEWINDOW_H

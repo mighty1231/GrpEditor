@@ -9,6 +9,7 @@ Data::Data()
 
     icWpe = 0;
     icMapping = 0;
+    icRemapping = 0;
     icColorCycling = 0;
 
     background = 0;

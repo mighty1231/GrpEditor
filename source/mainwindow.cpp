@@ -13,12 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
     data = Data::getInstance();
     loadData();
 
-    palleteWindow = new PalleteWindow(this);
-
-    connect(ui->actionOpen_grp, SIGNAL(triggered()), this, SLOT(loadGrp()));
+    connect(ui->act_open_grp, SIGNAL(triggered()), this, SLOT(loadGrp()));
+    connect(ui->act_pallete, SIGNAL(toggled(bool)), this, SLOT(openPallete()));
 
     show();
-    palleteWindow->show();
+    palleteWindow = NULL;
+    openPallete();
 }
 
 void MainWindow::loadData()
@@ -133,6 +133,23 @@ void MainWindow::loadGrp()
 void MainWindow::saveGrp()
 {
 
+}
+
+void MainWindow::openPallete()
+{
+    if (palleteWindow == NULL) {
+        palleteWindow = new PalleteWindow(this);
+        connect(palleteWindow, SIGNAL(closing()),
+                this, SLOT(palleteClosed()));
+        palleteWindow->show();
+    } else {
+        palleteWindow->close();
+    }
+}
+
+void MainWindow::palleteClosed()
+{
+    palleteWindow = NULL;
 }
 
 MainWindow::~MainWindow()

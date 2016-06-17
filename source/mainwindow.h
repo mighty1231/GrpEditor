@@ -23,14 +23,18 @@ public:
     void loadRemapping();
     void loadColorCycling();
 
+private:
+    int t;
+    PalleteWindow *palleteWindow;
+    Data *data;
+    Ui::MainWindow *ui;
+
 public slots:
     void loadGrp();
     void saveGrp();
 
-private:
-    Data *data;
-    PalleteWindow *palleteWindow;
-    Ui::MainWindow *ui;
+    void openPallete();
+    void palleteClosed();
 };
 
 #endif // MAINWINDOW_H

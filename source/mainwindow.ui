@@ -67,13 +67,20 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen_grp"/>
+    <addaction name="act_new"/>
+    <addaction name="act_open_grp"/>
     <addaction name="separator"/>
-    <addaction name="actionSave_grp"/>
-    <addaction name="actionSave_As"/>
+    <addaction name="act_save"/>
+    <addaction name="act_save_as"/>
+   </widget>
+   <widget class="QMenu" name="menuTool">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="act_pallete"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTool"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -84,24 +91,35 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionOpen_grp">
+  <action name="act_open_grp">
    <property name="text">
     <string>Open .grp</string>
    </property>
   </action>
-  <action name="actionNew">
+  <action name="act_new">
    <property name="text">
     <string>New</string>
    </property>
   </action>
-  <action name="actionSave_grp">
+  <action name="act_save">
    <property name="text">
     <string>Save</string>
    </property>
   </action>
-  <action name="actionSave_As">
+  <action name="act_save_as">
    <property name="text">
     <string>Save As...</string>
+   </property>
+  </action>
+  <action name="act_pallete">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>pallete</string>
    </property>
   </action>
  </widget>
