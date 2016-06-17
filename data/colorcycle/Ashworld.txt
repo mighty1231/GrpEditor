@@ -1,0 +1,5 @@
+[
+	{"time_interval": 8, "low": 1, "high": 4},
+	{"time_interval": 8, "low": 5, "high": 8},
+	{"time_interval": 8, "low": 9, "high": 12},
+]

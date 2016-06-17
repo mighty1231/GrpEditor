@@ -1,0 +1,4 @@
+[
+	{"time_interval": 8, "low": 1, "high": 13},
+	{"time_interval": 8, "low": 248, "high": 254},
+]
