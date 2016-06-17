@@ -26,6 +26,7 @@ void MainWindow::loadData()
     loadWpe();
     loadMapping();
     loadRemapping();
+    loadColorCycling();
 }
 
 void MainWindow::loadWpe()
@@ -89,6 +90,27 @@ void MainWindow::loadRemapping()
             /* fail */
         } else {
             data->appendRemapping(remapping);
+        }
+    }
+}
+
+void MainWindow::loadColorCycling()
+{
+    data->appendColorCycling(ColorCycling::loadDefault());
+    QDir dir("data/colorcycling/");
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+    QStringList filters;
+    filters << "*.colorcycling";
+    dir.setNameFilters(filters);
+    QDirIterator iter(dir);
+    while (iter.hasNext()) {
+        iter.next();
+        ColorCycling *colorCycling = ColorCycling::load(iter.fileInfo().completeBaseName(),
+                             iter.filePath());
+        if (colorCycling == NULL) {
+            /* fail */
+        } else {
+            data->appendColorCycling(colorCycling);
         }
     }
 }
