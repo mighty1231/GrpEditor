@@ -18,7 +18,10 @@ public:
     static Wpe * loadDefault();
 
     QString getName();
-    QRgb getColor (int index) {return data[index];}
+    QRgb getColor (int index) {
+        Q_ASSERT(index >= 0 && index < 256);
+        return data[index];
+    }
     QRgb const& operator[](int index) const;
 };
 

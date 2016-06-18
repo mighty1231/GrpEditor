@@ -29,7 +29,12 @@ QVector<QRgb> const &Data::getColorTable() const
 void Data::updateColorTable()
 {
     for (int i=0; i<256; i++){
-        colorTable[i] = wpes[icWpe]->getColor(i);
+        colorTable[i] = wpes[icWpe]->getColor(
+                    mappings[icMapping]->getIndex(i)
+                    );
+    }
+    for (int i=0; i<256; i++) {
+        qDebug() << mappings[icMapping]->getIndex(i);
     }
     emit colorTableChanged(colorTable);
 }

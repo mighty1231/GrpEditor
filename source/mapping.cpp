@@ -42,7 +42,7 @@ QString Mapping::getName()
     return name;
 }
 
-char const& Mapping::operator[](int index) const
+quint8 Mapping::getIndex(int index)
 {
     Q_ASSERT(index >= 0 && index < 256);
     return table[index];

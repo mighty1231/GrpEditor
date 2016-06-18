@@ -15,7 +15,7 @@ public:
     static Mapping * loadDefault();
 
     QString getName();
-    char const& operator[](int index) const;
+    quint8 getIndex(int index);
 };
 
 #endif // MAPPING_H
