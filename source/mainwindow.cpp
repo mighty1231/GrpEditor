@@ -34,6 +34,7 @@ void MainWindow::loadData()
     loadMapping();
     loadRemapping();
     loadColorCycling();
+    data->updateColorTable();
 }
 
 void MainWindow::loadWpe()
