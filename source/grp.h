@@ -31,6 +31,7 @@ public:
 
     int getWidth() {return width;}
     int getHeight() {return height;}
+    int getFrameCount() {return framecount;}
     QByteArray * getFrame(int i) {return frames[i];}
 };
 

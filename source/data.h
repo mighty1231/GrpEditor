@@ -48,10 +48,6 @@ public:
         emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
     }
     int getGrpIndex() {return icGrp;}
-    void setGrpIndex(int i) {
-        this->icGrp = i;
-        emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
-    }
 
     void appendWpe(Wpe *wpe) {wpes.append(wpe);}
     void appendMapping (Mapping *map) {mappings.append(map);}
@@ -78,6 +74,10 @@ signals:
     void colorTableChanged(QVector<QRgb> colorTable);
 
 public slots:
+    void setGrpIndex(int i) {
+        this->icGrp = i;
+        emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
+    }
     void setWpeIndex (int i) {
         if (icWpe == i)
             return;

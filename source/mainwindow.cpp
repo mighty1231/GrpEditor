@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(data, SIGNAL(colorTableChanged(QVector<QRgb>)),
             this, SLOT(updatePallete(QVector<QRgb>)));
 
+    connect(ui->frameListWidget, SIGNAL(currentRowChanged(int)),
+            data, SLOT(setGrpIndex(int)));
+
     show();
     palleteWindow = NULL;
     openPallete();
@@ -141,6 +144,10 @@ void MainWindow::loadGrp()
     Grp *old_grp = data->getGrp();
     if (old_grp != NULL) {
         delete old_grp;
+        ui->frameListWidget->clear();
+    }
+    for (int i=0; i<new_grp->getFrameCount(); i++) {
+        ui->frameListWidget->addItem(QString::asprintf("Frame #%u", i));
     }
     data->setGrp(new_grp);
 }

@@ -34,8 +34,5 @@ void Data::updateColorTable()
                     mappings[icMapping]->getIndex(i)
                     );
     }
-    for (int i=0; i<256; i++) {
-        qDebug() << mappings[icMapping]->getIndex(i);
-    }
     emit colorTableChanged(colorTable);
 }
