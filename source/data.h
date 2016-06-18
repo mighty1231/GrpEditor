@@ -34,6 +34,9 @@ private:
 
     QVector<QRgb> colorTable;
 
+    // brush things
+    int drawingIndex;
+
     Data();
 public:
     static Data * getInstance();
@@ -68,6 +71,8 @@ public:
     QVector<QRgb> const &getColorTable() const;
     void updateColorTable ();
 
+    int getDrawingIndex() {return drawingIndex;}
+
 signals:
     void grpChanged(int w, int h, char *data);
     void colorTableChanged(QVector<QRgb> colorTable);
@@ -97,7 +102,7 @@ public slots:
         icColorCycling = i;
         updateColorTable();
     }
-
+    void setDrawingIndex (int i) {drawingIndex = i;}
 };
 
 #endif // DATA_H

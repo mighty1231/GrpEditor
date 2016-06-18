@@ -12,6 +12,7 @@ Data::Data() : colorTable(256)
     icRemapping = 0;
     icColorCycling = 0;
 
+    drawingIndex = 0;
 }
 Data * Data::getInstance()
 {

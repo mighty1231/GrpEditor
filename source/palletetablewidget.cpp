@@ -46,6 +46,16 @@ void PalleteTableWidget::paintEvent(QPaintEvent *event)
                         QColor::fromRgb(table[i*16+j]));
         }
     }
+
+    int ind = data->getDrawingIndex();
+    QPen pen(QColor::fromRgb(255, 0, 0));
+    pen.setWidth(2);
+    painter.setPen(pen);
+    painter.drawRect(
+                MARGIN_HORI+(INTERV_SPACE+entry_w)*(ind%16)+1,
+                MARGIN_VERT+(INTERV_SPACE+entry_h)*(ind>>4)+1,
+                entry_w-1,
+                entry_h-1);
 }
 
 void PalleteTableWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -69,6 +79,7 @@ void PalleteTableWidget::mouseReleaseEvent(QMouseEvent *event)
             && (y-MARGIN_HORI-j*(INTERV_SPACE+entry_h)) < entry_h) {
         qDebug("x %d y %d i %d j %d res %d", x, y, i, j, j*16+i);
         emit indexChanged(j*16+i);
+        update();
     }
     event->accept();
 }

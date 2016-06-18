@@ -196,11 +196,6 @@ void MainWindow::updatePallete(QVector<QRgb> colorTable)
     ui->grpImageLabel->setPixmap(grpPixmap);
 }
 
-void MainWindow::updateDrawingIndex(int index)
-{
-    drawingIndex = index;
-}
-
 MainWindow::~MainWindow()
 {
     delete ui;

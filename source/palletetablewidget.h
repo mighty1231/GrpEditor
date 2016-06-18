@@ -10,7 +10,7 @@ class PalleteTableWidget : public QFrame
 private:
     static const int MARGIN_HORI = 10;
     static const int MARGIN_VERT = 8;
-    static const int INTERV_SPACE = 0;
+    static const int INTERV_SPACE = 4;
 
     static const int ENTRY_MIN_WIDTH = 10;
     static const int ENTRY_MIN_HEIGHT = 10;
