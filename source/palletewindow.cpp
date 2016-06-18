@@ -7,6 +7,8 @@ PalleteWindow::PalleteWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    mainWindow = static_cast<MainWindow *>(parent);
+
     data = Data::getInstance();
     QVector<Wpe *> wpes = data->getWpes();
     QVector<Mapping *> mappings = data->getMappings();
@@ -41,13 +43,18 @@ PalleteWindow::PalleteWindow(QWidget *parent) :
                                   data, SLOT(setColorCyclingIndex(int)));
 
 
+
     palleteTableWidget = new PalleteTableWidget(this);
     ui->layout0->addWidget(palleteTableWidget, 1);
+
+    connect(palleteTableWidget, SIGNAL(indexChanged(int)),
+            mainWindow, SLOT(updateDrawingIndex(int)));
 //    ui->palleteLabel->setPixmap();
 }
 
 PalleteWindow::~PalleteWindow()
 {
+    delete palleteTableWidget;
     delete ui;
 }
 

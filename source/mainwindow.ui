@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>781</width>
-    <height>573</height>
+    <width>817</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,22 +43,13 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>653</width>
-           <height>498</height>
+           <width>689</width>
+           <height>509</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
            <widget class="QLabel" name="grpImageLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
@@ -77,7 +68,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>781</width>
+     <width>817</width>
      <height>21</height>
     </rect>
    </property>

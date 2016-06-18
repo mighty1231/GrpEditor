@@ -9,6 +9,7 @@ namespace Ui {
 class MainWindow;
 }
 
+class PalleteWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -31,6 +32,8 @@ private:
     PalleteWindow *palleteWindow;
     Ui::MainWindow *ui;
 
+    int drawingIndex;
+
 public slots:
     void loadGrp();
     void saveGrp();
@@ -40,6 +43,8 @@ public slots:
 
     void updatePixelData(int, int, char *);
     void updatePallete(QVector<QRgb>);
+
+    void updateDrawingIndex(int);
 };
 
 #endif // MAINWINDOW_H

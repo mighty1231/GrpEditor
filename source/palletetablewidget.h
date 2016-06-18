@@ -10,12 +10,16 @@ class PalleteTableWidget : public QFrame
 private:
     static const int MARGIN_HORI = 10;
     static const int MARGIN_VERT = 8;
-    static const int INTERV_SPACE = 5;
+    static const int INTERV_SPACE = 0;
 
     static const int ENTRY_MIN_WIDTH = 10;
     static const int ENTRY_MIN_HEIGHT = 10;
+
+
     Data *data;
     QRgb table[256];
+    int entry_w;
+    int entry_h;
 public:
     explicit PalleteTableWidget(QWidget *parent = 0);
 
@@ -24,8 +28,10 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event);
 
 signals:
+    void indexChanged(int);
 
 public slots:
     void updatePallete(QVector<QRgb> rgb);
