@@ -9,12 +9,19 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    grpImage = NULL;
+
     /* load data files */
     data = Data::getInstance();
     loadData();
 
+    ui->grpImageScrollArea->setBackgroundRole(QPalette::Dark);
     connect(ui->act_open_grp, SIGNAL(triggered()), this, SLOT(loadGrp()));
     connect(ui->act_pallete, SIGNAL(toggled(bool)), this, SLOT(openPallete()));
+    connect(data, SIGNAL(grpChanged(int, int, char *)),
+            this, SLOT(updatePixelData(int, int, char *)));
+    connect(data, SIGNAL(colorTableChanged(QVector<QRgb>)),
+            this, SLOT(updatePallete(QVector<QRgb>)));
 
     show();
     palleteWindow = NULL;
@@ -124,10 +131,17 @@ void MainWindow::loadGrp()
                 tr("Grp files (*.grp)"));
     qDebug() << fname;
 
-    Grp *grp = Grp::load(fname);
-    if (grp != NULL) {
-        data->setGrp(grp);
+    Grp *new_grp = Grp::load(fname);
+    if (new_grp == NULL) {
+        QMessageBox::critical(this, "Error", "Error happened in grp loading");
+        return;
     }
+
+    Grp *old_grp = data->getGrp();
+    if (old_grp != NULL) {
+        delete old_grp;
+    }
+    data->setGrp(new_grp);
 }
 
 void MainWindow::saveGrp()
@@ -150,6 +164,35 @@ void MainWindow::openPallete()
 void MainWindow::palleteClosed()
 {
     palleteWindow = NULL;
+}
+
+void MainWindow::updatePixelData(int width, int height, char *frame)
+{
+    qDebug() << "updatePixelData()";
+    if (grpImage == NULL) {
+        grpImage = new QImage(width, height, QImage::Format_Indexed8);
+        grpImage->setColorTable(data->getColorTable());
+    } else if ((grpImage->width() != width)
+               || (grpImage->height() != height)) {
+        delete grpImage;
+        grpImage = new QImage(width, height, QImage::Format_Indexed8);
+        grpImage->setColorTable(data->getColorTable());
+    }
+    for (int i=0; i<height; i++) {
+        memcpy(grpImage->scanLine(i), frame+i*width, width);
+    }
+    grpPixmap.convertFromImage(*grpImage);
+    ui->grpImageLabel->setPixmap(grpPixmap);
+}
+
+void MainWindow::updatePallete(QVector<QRgb> colorTable)
+{
+    qDebug() << "updatePallete";
+    if (grpImage == NULL)
+        return;
+    grpImage->setColorTable(colorTable);
+    grpPixmap.convertFromImage(*grpImage);
+    ui->grpImageLabel->setPixmap(grpPixmap);
 }
 
 MainWindow::~MainWindow()

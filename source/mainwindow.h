@@ -24,9 +24,11 @@ public:
     void loadColorCycling();
 
 private:
-    int t;
-    PalleteWindow *palleteWindow;
+    QImage *grpImage;
+    QPixmap grpPixmap;
     Data *data;
+
+    PalleteWindow *palleteWindow;
     Ui::MainWindow *ui;
 
 public slots:
@@ -35,6 +37,9 @@ public slots:
 
     void openPallete();
     void palleteClosed();
+
+    void updatePixelData(int, int, char *);
+    void updatePallete(QVector<QRgb>);
 };
 
 #endif // MAINWINDOW_H

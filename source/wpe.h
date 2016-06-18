@@ -3,13 +3,13 @@
 #define WPE_H
 
 #include <QVector>
-#include <QColor>
+#include <QRgb>
 #include <QFile>
 
 class Wpe
 {
 private:
-    QColor data[256];
+    QRgb data[256];
     QString name;
 
     Wpe(QByteArray ba);
@@ -18,7 +18,8 @@ public:
     static Wpe * loadDefault();
 
     QString getName();
-    QColor const& operator[](int index) const;
+    QRgb getColor (int index) {return data[index];}
+    QRgb const& operator[](int index) const;
 };
 
 #endif // WPE_H

@@ -1,7 +1,7 @@
 #include "data.h"
 
 Data * Data::instance = NULL;
-Data::Data()
+Data::Data() : colorTable(256)
 {
     grp = NULL;
     icGrp = 0;
@@ -12,7 +12,6 @@ Data::Data()
     icRemapping = 0;
     icColorCycling = 0;
 
-    background = 0;
 }
 Data * Data::getInstance()
 {
@@ -20,4 +19,17 @@ Data * Data::getInstance()
         instance = new Data();
     }
     return instance;
+}
+
+QVector<QRgb> const &Data::getColorTable() const
+{
+    return colorTable;
+}
+
+void Data::updateColorTable()
+{
+    for (int i=0; i<256; i++){
+        colorTable[i] = wpes[icWpe]->getColor(i);
+    }
+    emit colorTableChanged(colorTable);
 }

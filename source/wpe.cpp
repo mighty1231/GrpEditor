@@ -6,10 +6,7 @@ Wpe::Wpe(QByteArray ba)
 {
     Q_ASSERT (ba.length() == 256 * 4);
     for (int i=0; i<256; i++) {
-        data[i] = QColor::fromRgb(
-                (quint8) ba[4*i],
-                (quint8) ba[4*i+1],
-                (quint8) ba[4*i+2]);
+        data[i] = qRgb(ba[4*i], ba[4*i+1], ba[4*i+2]);
     }
 }
 Wpe * Wpe::load(QString name, QString fname)
@@ -48,7 +45,7 @@ QString Wpe::getName()
     return name;
 }
 
-QColor const& Wpe::operator[](int index) const
+QRgb const& Wpe::operator[](int index) const
 {
     Q_ASSERT(index >= 0 && index < 256);
     return data[index];

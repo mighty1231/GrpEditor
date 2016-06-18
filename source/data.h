@@ -32,14 +32,24 @@ private:
     QVector<ColorCycling *> colorCyclings;
     int icColorCycling;
 
-
-    char background;
+    QVector<QRgb> colorTable;
 
     Data();
 public:
     static Data * getInstance();
 
-    void setGrp(Grp *grp) {this->grp = grp;}
+    Grp * getGrp() {return grp;}
+    void setGrp(Grp *grp) {
+        this->grp=grp;
+        this->icGrp=0;
+        emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
+    }
+    int getGrpIndex() {return icGrp;}
+    void setGrpIndex(int i) {
+        this->icGrp = i;
+        emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
+    }
+
     void appendWpe(Wpe *wpe) {wpes.append(wpe);}
     void appendMapping (Mapping *map) {mappings.append(map);}
     void appendRemapping (Remapping *rem) {remappings.append(rem);}
@@ -55,11 +65,39 @@ public:
     int getRemappingIndex () {return icRemapping;}
     int getColorCyclingIndex () {return icColorCycling;}
 
+    QVector<QRgb> const &getColorTable() const;
+    void updateColorTable ();
+
+signals:
+    void grpChanged(int w, int h, char *data);
+    void colorTableChanged(QVector<QRgb> colorTable);
+
 public slots:
-    void setWpeIndex (int i) {icWpe = i;}
-    void setMappingIndex (int i) {icMapping = i;}
-    void setRemappingIndex (int i) {icRemapping = i;}
-    void setColorCyclingIndex (int i) {icColorCycling = i;}
+    void setWpeIndex (int i) {
+        if (icWpe == i)
+            return;
+        icWpe = i;
+        updateColorTable();
+    }
+    void setMappingIndex (int i) {
+        if (icMapping == i)
+            return;
+        icMapping = i;
+        updateColorTable();
+    }
+    void setRemappingIndex (int i) {
+        if (icRemapping == i)
+            return;
+        icRemapping = i;
+        updateColorTable();
+    }
+    void setColorCyclingIndex (int i) {
+        if (icColorCycling == i)
+            return;
+        icColorCycling = i;
+        updateColorTable();
+    }
+
 };
 
 #endif // DATA_H

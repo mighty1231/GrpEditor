@@ -28,6 +28,10 @@ private:
 public:
     ~Grp();
     static Grp * load(QString fname);
+
+    int getWidth() {return width;}
+    int getHeight() {return height;}
+    QByteArray * getFrame(int i) {return frames[i];}
 };
 
 #endif // GRP_H

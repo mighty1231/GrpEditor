@@ -58,7 +58,7 @@ Grp * Grp::load(QString fname)
         for (j=0; j<i; j++) {
             if (memcmp(&history[j], frameHeader, sizeof(GrpFrameHeader)) == 0) {
                 /* history hit! */
-                memcpy(grp->frames[i]->data(), grp->frames[j]->data(),
+                memcpy(grp->frames[i]->data(), grp->frames[j]->constData(),
                        header->width*header->height);
                 break;
             }
@@ -77,7 +77,7 @@ Grp * Grp::load(QString fname)
         unsigned short *lineOffsets = (unsigned short *)(ba.data() + frameHeader->offset);
         for (unsigned int line=0; line<frameHeader->h; line++) {
             /* read each line */
-            unsigned char *dest = (unsigned char *)(grp->frames[i]->data()+frameHeader->y*header->height+frameHeader->x);
+            char *dest = grp->frames[i]->data()+(frameHeader->y+line)*header->width+frameHeader->x;
             unsigned int srcIndex = frameHeader->offset + lineOffsets[line];
             int written = 0;
 
@@ -118,7 +118,6 @@ Grp * Grp::load(QString fname)
             }
         }
     }
-
 
     return grp;
 }
