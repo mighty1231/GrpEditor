@@ -145,6 +145,7 @@ void MainWindow::loadGrp()
     }
 
     Grp *old_grp = data->getGrp();
+    ui->frameListWidget->setEnabled(false);
     if (old_grp != NULL) {
         delete old_grp;
         ui->frameListWidget->clear();
@@ -153,6 +154,7 @@ void MainWindow::loadGrp()
         ui->frameListWidget->addItem(QString::asprintf("Frame #%u", i));
     }
     data->setGrp(new_grp);
+    ui->frameListWidget->setEnabled(true);
 }
 
 void MainWindow::saveGrp()
