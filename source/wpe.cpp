@@ -33,7 +33,7 @@ Wpe * Wpe::loadDefault()
 {
     QByteArray ba(256 * 4, 0);
     for (int i = 0; i < 256; i++) {
-        ba[4*i+1] = ba[4*i+1] = ba[4*i+2] = i;
+        ba[4*i] = ba[4*i+1] = ba[4*i+2] = i;
     }
     Wpe *wpe = new Wpe(ba);
     wpe->name = DEFAULT_OBJNAME;
