@@ -86,6 +86,9 @@ void PalleteTableWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void PalleteTableWidget::updatePallete(QVector<QRgb> rgb)
 {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT PalleteTableWidget::updatePallete";
+#endif
     memcpy(table, rgb.constData(), sizeof(table));
     update();
 }

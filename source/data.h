@@ -75,34 +75,54 @@ signals:
 
 public slots:
     void setGrpIndex(int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setGrpIndex";
+#endif
         this->icGrp = i;
         emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
     }
     void setWpeIndex (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setWpeIndex";
+#endif
         if (icWpe == i)
             return;
         icWpe = i;
         updateColorTable();
     }
     void setMappingIndex (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setMappingIndex";
+#endif
         if (icMapping == i)
             return;
         icMapping = i;
         updateColorTable();
     }
     void setRemappingIndex (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setRemappingIndex";
+#endif
         if (icRemapping == i)
             return;
         icRemapping = i;
         updateColorTable();
     }
     void setColorCyclingIndex (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setColorCyclingIndex";
+#endif
         if (icColorCycling == i)
             return;
         icColorCycling = i;
         updateColorTable();
     }
-    void setDrawingIndex (int i) {drawingIndex = i;}
+    void setDrawingIndex (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setDrawingIndex";
+#endif
+        drawingIndex = i;
+    }
 };
 
 #endif // DATA_H

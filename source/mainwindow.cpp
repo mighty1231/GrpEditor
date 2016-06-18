@@ -128,6 +128,9 @@ void MainWindow::loadColorCycling()
 
 void MainWindow::loadGrp()
 {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::loadGrp";
+#endif
     QString fname = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
@@ -154,11 +157,18 @@ void MainWindow::loadGrp()
 
 void MainWindow::saveGrp()
 {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::saveGrp";
+#endif
 
 }
 
 void MainWindow::openPallete()
 {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::openPallete";
+#endif
+
     if (palleteWindow == NULL) {
         palleteWindow = new PalleteWindow(this);
         connect(palleteWindow, SIGNAL(closing()),
@@ -171,12 +181,17 @@ void MainWindow::openPallete()
 
 void MainWindow::palleteClosed()
 {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::palleteClosed";
+#endif
     palleteWindow = NULL;
 }
 
 void MainWindow::updatePixelData(int width, int height, char *frame)
 {
-    qDebug() << "updatePixelData()";
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::updatePixelData";
+#endif
     if (grpImage == NULL) {
         grpImage = new QImage(width, height, QImage::Format_Indexed8);
         grpImage->setColorTable(data->getColorTable());
@@ -195,7 +210,9 @@ void MainWindow::updatePixelData(int width, int height, char *frame)
 
 void MainWindow::updatePallete(QVector<QRgb> colorTable)
 {
-    qDebug() << "updatePallete";
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::updatePallete";
+#endif
     if (grpImage == NULL)
         return;
     grpImage->setColorTable(colorTable);
