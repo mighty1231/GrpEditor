@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     data.cpp \
     grp.cpp \
     remapping.cpp \
-    colorcycling.cpp
+    colorcycling.cpp \
+    palletetablewidget.cpp
 
 HEADERS  += mainwindow.h \
     globals.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     data.h \
     grp.h \
     remapping.h \
-    colorcycling.h
+    colorcycling.h \
+    palletetablewidget.h
 
 FORMS    += mainwindow.ui \
     palletewindow.ui

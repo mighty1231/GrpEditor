@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QCloseEvent>
 #include "data.h"
+#include "palletetablewidget.h"
 
 namespace Ui {
 class PalleteWindow;
@@ -22,6 +23,7 @@ signals:
 
 private:
     Data *data;
+    PalleteTableWidget *palleteTableWidget;
     Ui::PalleteWindow *ui;
 
     void closeEvent(QCloseEvent *event);

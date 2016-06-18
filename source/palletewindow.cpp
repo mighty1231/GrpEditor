@@ -40,6 +40,10 @@ PalleteWindow::PalleteWindow(QWidget *parent) :
     connect(ui->combo_cc, SIGNAL(currentIndexChanged(int)),
                                   data, SLOT(setColorCyclingIndex(int)));
 
+
+    palleteTableWidget = new PalleteTableWidget(this);
+    ui->layout0->addWidget(palleteTableWidget, 1);
+//    ui->palleteLabel->setPixmap();
 }
 
 PalleteWindow::~PalleteWindow()
