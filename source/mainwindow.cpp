@@ -26,6 +26,25 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->frameListWidget, SIGNAL(currentRowChanged(int)),
             data, SLOT(setGrpIndex(int)));
 
+    connect(ui->newFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_new()));
+    connect(ui->loadFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_load()));
+    connect(ui->saveFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_save()));
+    connect(ui->copyFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_copy()));
+    connect(ui->deleteFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_delete()));
+    connect(ui->upFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_up()));
+    connect(ui->downFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_down()));
+    connect(ui->upmostFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_upmost()));
+    connect(ui->downmostFrameButton, SIGNAL(clicked(bool)),
+            this, SLOT(frame_downmost()));
+
     show();
     palleteWindow = NULL;
     openPallete();
@@ -221,6 +240,70 @@ void MainWindow::updatePallete(QVector<QRgb> colorTable)
     grpPixmap.convertFromImage(*grpImage);
     ui->grpImageLabel->setPixmap(grpPixmap);
 }
+
+void MainWindow::frame_new()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_new";
+#endif
+}
+
+void MainWindow::frame_load()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_load";
+#endif
+}
+
+void MainWindow::frame_save()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_save";
+#endif
+}
+
+void MainWindow::frame_copy()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_copy";
+#endif
+}
+
+void MainWindow::frame_delete()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_delete";
+#endif
+}
+
+void MainWindow::frame_up()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_up";
+#endif
+}
+
+void MainWindow::frame_down()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_down";
+#endif
+}
+
+void MainWindow::frame_upmost()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_upmost";
+#endif
+}
+
+void MainWindow::frame_downmost()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::frame_downmost";
+#endif
+}
+
 
 MainWindow::~MainWindow()
 {

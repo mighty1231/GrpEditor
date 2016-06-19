@@ -16,25 +16,104 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
       <item>
-       <widget class="QListWidget" name="frameListWidget">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+        <item>
+         <widget class="QListWidget" name="frameListWidget">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>프레임 리모콘</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="2" column="0">
+            <widget class="QPushButton" name="deleteFrameButton">
+             <property name="text">
+              <string>삭제</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="upFrameButton">
+             <property name="text">
+              <string>△</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QPushButton" name="loadFrameButton">
+             <property name="text">
+              <string>불러</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="upmostFrameButton">
+             <property name="text">
+              <string>▲</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="saveFrameButton">
+             <property name="text">
+              <string>저장</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="downmostFrameButton">
+             <property name="text">
+              <string>▼</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="downFrameButton">
+             <property name="text">
+              <string>▽</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="copyFrameButton">
+             <property name="text">
+              <string>복사</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="2">
+            <widget class="QPushButton" name="newFrameButton">
+             <property name="text">
+              <string>새 빈 프레임</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+          <zorder>copyFrameButton</zorder>
+          <zorder>upmostFrameButton</zorder>
+          <zorder>upFrameButton</zorder>
+          <zorder>deleteFrameButton</zorder>
+          <zorder>downFrameButton</zorder>
+          <zorder>loadFrameButton</zorder>
+          <zorder>downmostFrameButton</zorder>
+          <zorder>saveFrameButton</zorder>
+          <zorder>newFrameButton</zorder>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QScrollArea" name="grpImageScrollArea">
@@ -46,12 +125,12 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>689</width>
+           <width>611</width>
            <height>509</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
+          <item row="0" column="1">
            <widget class="QLabel" name="grpImageLabel">
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
