@@ -1,26 +1,34 @@
 #include "grp.h"
 
-Grp::Grp(unsigned int framecount, unsigned int width, unsigned int height)
+Grp::Grp(int framecount, int width, int height)
 {
+    Q_ASSERT(0 < framecount && framecount < 65536);
+    Q_ASSERT(0 < width && width < 65536);
+    Q_ASSERT(0 < height && height < 65536);
+
     this->framecount = framecount;
     this->width = width;
     this->height = height;
-    for (unsigned int i=0; i<framecount; i++) {
+    for (int i=0; i<framecount; i++) {
         this->frames.append(new QByteArray(width*height, 0));
     }
 }
-Grp::Grp(unsigned short framecount, unsigned short width, unsigned short height)
+Grp::Grp(short framecount, short width, short height)
 {
+    Q_ASSERT(framecount != 0);
+    Q_ASSERT(width != 0);
+    Q_ASSERT(height != 0);
+
     this->framecount = framecount;
     this->width = width;
     this->height = height;
-    for (unsigned int i=0; i<framecount; i++) {
+    for (int i=0; i<framecount; i++) {
         this->frames.append(new QByteArray(width*height, 0));
     }
 }
 Grp::~Grp()
 {
-    for (unsigned int i=0; i<framecount; i++) {
+    for (int i=0; i<framecount; i++) {
         delete this->frames[i];
     }
 }
@@ -46,6 +54,10 @@ Grp * Grp::load(QString fname)
 
     if (fileLength < 6+sizeof(GrpFrameHeader)*header->count)
         return NULL;
+
+    if (header->count == 0 || header->width == 0 || header->height == 0)
+        return NULL;
+
     Grp *grp = new Grp(header->count, header->width, header->height);
     GrpFrameHeader *frameHeader = reinterpret_cast<GrpFrameHeader *>(ba.data()+6);
     QVector<GrpFrameHeader> history(header->count);
@@ -120,4 +132,73 @@ Grp * Grp::load(QString fname)
     }
 
     return grp;
+}
+
+/* Make empty frame to i-th position. */
+void Grp::insertFrame(int i)
+{
+    Q_ASSERT(0 <= i && i <= framecount);
+
+    frames.insert(i, new QByteArray(width * height, 0));
+    framecount++;
+}
+
+void Grp::insertFrame(int i, QByteArray qb)
+{
+    Q_ASSERT(0 <= i && i <= framecount);
+
+    frames.insert(i, new QByteArray(qb));
+    framecount++;
+}
+
+void Grp::copyFrame(int i)
+{
+    Q_ASSERT(0 <= i && i < framecount);
+
+    frames.insert(i, new QByteArray(*frames[i]));
+    framecount++;
+}
+
+void Grp::deleteFrame(int i)
+{
+    Q_ASSERT(0 <= i && i < framecount);
+
+    QByteArray *t = frames[i];
+    frames.erase(frames.begin()+i);
+    delete t;
+    framecount--;
+}
+
+void Grp::swapFrame(int i, int j)
+{
+    Q_ASSERT(0 <= i && i < framecount);
+    Q_ASSERT(0 <= j && j < framecount);
+    Q_ASSERT(i != j);
+
+    QByteArray *tmp = frames[i];
+    frames[i] = frames[j];
+    frames[j] = tmp;
+}
+
+void Grp::upmostFrame(int i)
+{
+    Q_ASSERT(0 < i && i < framecount);
+
+    QByteArray *tmp = frames[i];
+    for (int c=i; c>0; c--) {
+        frames[c] = frames[c-1];
+    }
+    frames[0] = tmp;
+}
+
+void Grp::downmostFrame(int i)
+{
+    Q_ASSERT(0 <= i && i < framecount-1);
+
+
+    QByteArray *tmp = frames[i];
+    for (int c=i; c<framecount-1; c++) {
+        frames[c] = frames[c+1];
+    }
+    frames[framecount-1] = tmp;
 }

@@ -247,6 +247,14 @@ void MainWindow::frame_new()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_new";
 #endif
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    int index = data->getGrpIndex();
+    grp->insertFrame(index+1);
+    ui->frameListWidget->addItem(QString::asprintf("Frame #%u", grp->getFrameCount()-1));
+    ui->frameListWidget->setCurrentRow(index+1);
 }
 
 void MainWindow::frame_load()
@@ -268,6 +276,14 @@ void MainWindow::frame_copy()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_copy";
 #endif
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    int index = data->getGrpIndex();
+    grp->copyFrame(index);
+    ui->frameListWidget->addItem(QString::asprintf("Frame #%u", grp->getFrameCount()-1));
+    ui->frameListWidget->setCurrentRow(index+1);
 }
 
 void MainWindow::frame_delete()
@@ -275,6 +291,17 @@ void MainWindow::frame_delete()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_delete";
 #endif
+
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    if (grp->getFrameCount() == 1)
+        return;
+    int index = data->getGrpIndex();
+    grp->deleteFrame(index);
+    delete ui->frameListWidget->takeItem(grp->getFrameCount());
+    ui->frameListWidget->setCurrentRow((index == 0)?0:index-1);
 }
 
 void MainWindow::frame_up()
@@ -282,6 +309,15 @@ void MainWindow::frame_up()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_up";
 #endif
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    int index = data->getGrpIndex();
+    if (index == 0)
+        return;
+    grp->swapFrame(index, index-1);
+    ui->frameListWidget->setCurrentRow(index-1);
 }
 
 void MainWindow::frame_down()
@@ -289,6 +325,15 @@ void MainWindow::frame_down()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_down";
 #endif
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    int index = data->getGrpIndex();
+    if (index == grp->getFrameCount()-1)
+        return;
+    grp->swapFrame(index, index+1);
+    ui->frameListWidget->setCurrentRow(index+1);
 }
 
 void MainWindow::frame_upmost()
@@ -296,6 +341,15 @@ void MainWindow::frame_upmost()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_upmost";
 #endif
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    int index = data->getGrpIndex();
+    if (index == 0)
+        return;
+    grp->upmostFrame(index);
+    ui->frameListWidget->setCurrentRow(0); // @Think
 }
 
 void MainWindow::frame_downmost()
@@ -303,6 +357,15 @@ void MainWindow::frame_downmost()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_downmost";
 #endif
+    Grp *grp = data->getGrp();
+    if (grp == NULL)
+        return;
+
+    int index = data->getGrpIndex();
+    if (index == grp->getFrameCount()-1)
+        return;
+    grp->downmostFrame(index);
+    ui->frameListWidget->setCurrentRow(grp->getFrameCount()-1); // @Think
 }
 
 

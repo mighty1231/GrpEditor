@@ -6,14 +6,14 @@
 class Grp
 {
 private:
-    unsigned int framecount;
-    unsigned int width;
-    unsigned int height;
+    int framecount;
+    int width;
+    int height;
 
     QVector<QByteArray *> frames;
 
-    Grp(unsigned int framecount, unsigned int width, unsigned int height);
-    Grp(unsigned short framecount, unsigned short width, unsigned short height);
+    Grp(int framecount, int width, int height);
+    Grp(short framecount, short width, short height);
 
     struct GrpHeader {
         unsigned short count;
@@ -33,6 +33,14 @@ public:
     int getHeight() {return height;}
     int getFrameCount() {return framecount;}
     QByteArray * getFrame(int i) {return frames[i];}
+
+    void insertFrame(int i);
+    void insertFrame(int i, QByteArray qb);
+    void copyFrame(int i);
+    void deleteFrame(int i);
+    void swapFrame(int i, int j);
+    void upmostFrame(int i);
+    void downmostFrame(int i);
 };
 
 #endif // GRP_H
