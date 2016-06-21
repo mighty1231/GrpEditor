@@ -308,4 +308,9 @@ void MainWindow::frame_downmost()
 MainWindow::~MainWindow()
 {
     delete ui;
+    if (palleteWindow != NULL)
+        delete palleteWindow;
+
+    if (grpImage != NULL)
+        delete grpImage;
 }
