@@ -21,9 +21,6 @@
        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
         <item>
          <widget class="QListWidget" name="frameListWidget">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
             <horstretch>0</horstretch>
