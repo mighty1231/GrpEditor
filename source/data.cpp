@@ -6,7 +6,6 @@ Data::Data() : colorTable(256)
     grp = NULL;
     icGrp = 0;
 
-
     icWpe = 0;
     icMapping = 0;
     icRemapping = 0;

@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->grpImageScrollArea->setBackgroundRole(QPalette::Dark);
     connect(ui->act_open_grp, SIGNAL(triggered()), this, SLOT(loadGrp()));
+    connect(ui->act_save_grp, SIGNAL(triggered()), this, SLOT(saveGrp()));
     connect(ui->act_pallete, SIGNAL(toggled(bool)), this, SLOT(openPallete()));
     connect(data, SIGNAL(grpChanged(int, int, char *)),
             this, SLOT(updatePixelData(int, int, char *)));
@@ -173,6 +174,7 @@ void MainWindow::loadGrp()
         ui->frameListWidget->addItem(QString::asprintf("Frame #%u", i));
     }
     data->setGrp(new_grp);
+    data->setGrpPath(fname);
     ui->frameListWidget->setCurrentRow(0);
     ui->frameListWidget->blockSignals(false);
 }
@@ -183,6 +185,10 @@ void MainWindow::saveGrp()
     qDebug() << "SLOT MainWindow::saveGrp";
 #endif
 
+    QString path = data->getGrpPath();
+    qDebug() << "path" << path;
+
+    data->getGrp()->save(path);
 }
 
 void MainWindow::openPallete()

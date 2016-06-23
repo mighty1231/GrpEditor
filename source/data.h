@@ -19,6 +19,7 @@ private:
      * and index of current selected one of them */
     Grp *grp;
     int icGrp; // frame index
+    QString grpPath;
 
     QVector<Wpe *> wpes;
     int icWpe;
@@ -48,6 +49,8 @@ public:
         emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
     }
     int getGrpIndex() {return icGrp;}
+    QString getGrpPath() {return grpPath;}
+    void setGrpPath(QString qs) {grpPath = qs;}
 
     void appendWpe(Wpe *wpe) {wpes.append(wpe);}
     void appendMapping (Mapping *map) {mappings.append(map);}

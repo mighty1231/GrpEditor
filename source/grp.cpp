@@ -134,6 +134,262 @@ Grp * Grp::load(QString fname)
     return grp;
 }
 
+void Grp::save(QString fname)
+{
+    QFile file(fname);
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+    GrpHeader header = {framecount, width, height};
+    QVector<GrpFrameHeader> frameHeaders(framecount);
+
+    QByteArray data;
+    int dataOffset = sizeof(header)+framecount*sizeof(GrpFrameHeader);
+
+    QVector<QByteArray> frameHashes;
+
+    for (int fnum=0; fnum<framecount; fnum++) {
+        QByteArray *frame = frames[fnum];
+
+        // get border
+        int x1, x2, y1, y2;
+        int w, h; // after calculate x1, x2, y1, y2, fill it.
+
+        // top
+        int __inc_i;
+        for (__inc_i=0; __inc_i<width*height; __inc_i++) {
+            if (frame->at(__inc_i) != 0)
+                break;
+        }
+        // empty frame
+        if (__inc_i == width*height) {
+            frameHeaders[fnum].x = 0;
+            frameHeaders[fnum].y = 0;
+            frameHeaders[fnum].w = 0;
+            frameHeaders[fnum].h = 0;
+            frameHeaders[fnum].offset = 0;
+            frameHashes.append(QByteArray());
+            continue;
+        }
+        y1 = __inc_i / width;
+
+        // bottom
+        int __dec_i = width*height-1;
+        while (frame->at(__dec_i) == 0)
+            __dec_i--;
+        y2 = __dec_i / width;
+        h = y2-y1+1;
+
+        // left
+        x1 = 0;
+        while(1) {
+            int offset = y1*width+x1;
+            int i = h;
+            for (; i>0; i--, offset+=width) {
+                if (frame->at(offset) != 0)
+                    break;
+            }
+            if (i != 0)
+                break;
+            x1++;
+        }
+
+        // right
+        x2 = width-1;
+        while(1) {
+            int offset = y1*width+x2;
+            int i=h;
+            for (; i>0; i--, offset+=width) {
+                if (frame->at(offset) != 0)
+                    break;
+            }
+            if (i != 0)
+                break;
+            x2--;
+        }
+        w = x2-x1+1;
+
+        // fill border infos
+        frameHeaders[fnum].x = x1;
+        frameHeaders[fnum].y = y1;
+        frameHeaders[fnum].w = w;
+        frameHeaders[fnum].h = h;
+
+        // hash
+        QCryptographicHash hash(QCryptographicHash::Sha3_512);
+        for (int y=y1; y<=y2; y++) {
+            hash.addData(frame->data()+y*width+x1, w);
+        }
+        QByteArray hashResult = hash.result();
+        int prevIndex = frameHashes.indexOf(hashResult);
+        if (!frameHashes.empty() && prevIndex != -1) {
+            frameHeaders[fnum].offset = frameHeaders[prevIndex].offset;
+            frameHashes.append(hashResult);
+            continue;
+        }
+        frameHeaders[fnum].offset = dataOffset;
+        frameHashes.append(hashResult);
+
+
+        // lines
+        QVector<unsigned short> lineOffsets(h);
+        QVector<QByteArray> lineHashes;
+        unsigned short lineDataOffset = h*sizeof(unsigned short);
+        QByteArray lineData;
+
+        for (int y=y1; y<=y2; y++) {
+            QCryptographicHash lineHash(QCryptographicHash::Sha3_512);
+            lineHash.addData(frame->data()+y*width+x1, w);
+            QByteArray lineHashResult = lineHash.result();
+            int prevLineIndex = lineHashes.indexOf(lineHashResult);
+            if (!lineHashes.empty() && prevLineIndex != -1) {
+                lineOffsets[y-y1] = lineOffsets[prevLineIndex];
+                lineHashes.append(lineHashResult);
+                continue;
+            }
+            lineOffsets[y-y1] = lineDataOffset;
+            lineHashes.append(lineHashResult);
+
+            // encode line.
+            // meet three consecutive character with nonzero, pack them.
+            enum EncMode {EMPTY, REPEAT1, REPEAT2, REPEAT3};
+            EncMode mode = EMPTY;
+            char *cur = frame->data()+y*width+x1;
+
+            int x = x1;
+            char lastChar;
+            unsigned char curBlockSize;
+            while (x <= x2) {
+                switch (mode) {
+                case EMPTY:
+                    curBlockSize = 1;
+                    mode = REPEAT1;
+                    break;
+                case REPEAT1:
+                    if (*cur == lastChar) {
+                        if (++curBlockSize == 0x3F) {
+                            // Preferred to repeat
+                            lineData.append(0x3D);
+                            lineData.append(cur-0x3E, 0x3D);
+                            lineDataOffset += 0x3E;
+                            curBlockSize = 2;
+                        } else if (lastChar == 0 && curBlockSize == 2) {
+                            /* special case, start with \0\0 -> REPEAT3 */
+                            mode = REPEAT3;
+                        } else {
+                            mode = REPEAT2;
+                        }
+                    } else {
+                        if (++curBlockSize == 0x3F) {
+                            lineData.append(0x3F);
+                            lineData.append(cur-0x3E, 0x3F);
+                            lineDataOffset += 0x40;
+                            mode = EMPTY;
+                        }
+                    }
+                    break;
+                case REPEAT2:
+                    if (*cur == lastChar) {
+                        mode = REPEAT3;
+                        // pack
+                        if (curBlockSize != 2) {
+                            lineData.append(curBlockSize-2);
+                            lineData.append(cur-curBlockSize, curBlockSize-2);
+                            lineDataOffset += curBlockSize-1;
+                        }
+                        curBlockSize = 3;
+                    } else {
+                        if (++curBlockSize == 0x3F) {
+                            lineData.append(0x3F);
+                            lineData.append(cur-0x3E, 0x3F);
+                            lineDataOffset += 0x40;
+                            mode = EMPTY;
+                        } else {
+                            mode = REPEAT1;
+                        }
+                    }
+                    break;
+                case REPEAT3:
+                    if (*cur == lastChar) {
+                        curBlockSize++;
+                        if (lastChar == 0 && curBlockSize == 0x7F) {
+                            lineData.append(-1);
+                            lineDataOffset += 1;
+                            mode = EMPTY;
+                        } else if (lastChar != 0 && curBlockSize == 0x3F) {
+                            lineData.append(0x7F);
+                            lineData.append(lastChar);
+                            lineDataOffset += 2;
+                            mode = EMPTY;
+                        }
+                    } else {
+                        // pack
+                        if (lastChar == 0) {
+                            lineData.append(0x80 | curBlockSize);
+                            lineDataOffset += 1;
+                        } else {
+                            lineData.append(0x40 | curBlockSize);
+                            lineData.append(lastChar);
+                            lineDataOffset += 2;
+                        }
+                        curBlockSize = 1;
+                        mode = REPEAT1;
+                    }
+                }
+
+                x++;
+                lastChar = *(cur++);
+            }
+
+             Q_ASSERT(lineData.length() == lineDataOffset - 2*h);
+
+            // last
+            switch (mode) {
+            case EMPTY:
+                break;
+            case REPEAT2:
+                if (lastChar == 0) {
+                    /* special case, end with \0\0 -> 0x82! */
+                    if (curBlockSize > 2) {
+                        lineData.append(curBlockSize-2);
+                        lineData.append(cur-curBlockSize, curBlockSize-2);
+                        lineDataOffset += curBlockSize-1;
+                    }
+                    lineData.append(-126);
+                    lineDataOffset += 1;
+                    break;
+                }
+            case REPEAT1:
+                lineData.append(curBlockSize);
+                lineData.append(cur-curBlockSize, curBlockSize);
+                lineDataOffset += curBlockSize+1;
+                break;
+            case REPEAT3:
+                if (lastChar == 0) {
+                    lineData.append(0x80 | curBlockSize);
+                    lineDataOffset += 1;
+                } else {
+                    lineData.append(0x40 | curBlockSize);
+                    lineData.append(lastChar);
+                    lineDataOffset += 2;
+                }
+            }
+        }
+
+        data.append((const char *)lineOffsets.data(), h*sizeof(unsigned short));
+        data.append(lineData);
+        dataOffset += h*sizeof(unsigned short);
+        dataOffset += lineData.length();
+    }
+
+    QDataStream out(&file);
+    out.writeRawData((const char *)&header, sizeof(header));
+    out.writeRawData((const char *)frameHeaders.constData(), framecount*sizeof(GrpFrameHeader));
+    out.writeRawData(data.constData(), data.length());
+    file.close();
+}
+
 /* Make empty frame to i-th position. */
 void Grp::insertFrame(int i)
 {

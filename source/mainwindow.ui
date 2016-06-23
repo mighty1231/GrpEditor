@@ -158,7 +158,7 @@
     <addaction name="act_new"/>
     <addaction name="act_open_grp"/>
     <addaction name="separator"/>
-    <addaction name="act_save"/>
+    <addaction name="act_save_grp"/>
     <addaction name="act_save_as"/>
    </widget>
    <widget class="QMenu" name="menuTool">
@@ -189,7 +189,7 @@
     <string>New</string>
    </property>
   </action>
-  <action name="act_save">
+  <action name="act_save_grp">
    <property name="text">
     <string>Save</string>
    </property>
