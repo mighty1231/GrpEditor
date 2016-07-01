@@ -17,7 +17,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void loadData();
     void loadWpe();
     void loadMapping();
     void loadRemapping();
@@ -30,6 +29,12 @@ private:
 
     PalleteWindow *palleteWindow;
     Ui::MainWindow *ui;
+
+    int scaleFactor;
+    int grpFrameIndex;
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 
 public slots:
     void loadGrp();
@@ -48,9 +53,10 @@ public slots:
     void frame_upmost();
     void frame_downmost();
 
+    void frameScrolled(int);
 
-    void updatePixelData(int, int, char *);
-    void updatePallete(QVector<QRgb>);
+    void updatePixel();
+    void updatePallete();
 };
 
 #endif // MAINWINDOW_H

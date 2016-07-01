@@ -4,7 +4,6 @@ Data * Data::instance = NULL;
 Data::Data() : colorTable(256)
 {
     grp = NULL;
-    icGrp = 0;
 
     icWpe = 0;
     icMapping = 0;
@@ -33,5 +32,5 @@ void Data::updateColorTable()
                     mappings[icMapping]->getIndex(i)
                     );
     }
-    emit colorTableChanged(colorTable);
+    emit colorTableChanged();
 }

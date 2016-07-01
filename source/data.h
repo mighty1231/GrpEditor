@@ -18,7 +18,6 @@ private:
     /* objects
      * and index of current selected one of them */
     Grp *grp;
-    int icGrp; // frame index
     QString grpPath;
 
     QVector<Wpe *> wpes;
@@ -43,12 +42,7 @@ public:
     static Data * getInstance();
 
     Grp * getGrp() {return grp;}
-    void setGrp(Grp *grp) {
-        this->grp=grp;
-        this->icGrp=0;
-        emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
-    }
-    int getGrpIndex() {return icGrp;}
+    void setGrp(Grp *grp) {this->grp=grp;}
     QString getGrpPath() {return grpPath;}
     void setGrpPath(QString qs) {grpPath = qs;}
 
@@ -73,17 +67,9 @@ public:
     int getDrawingIndex() {return drawingIndex;}
 
 signals:
-    void grpChanged(int w, int h, char *data);
-    void colorTableChanged(QVector<QRgb> colorTable);
+    void colorTableChanged();
 
 public slots:
-    void setGrpIndex(int i) {
-#ifdef QT_DEBUG
-        qDebug() << "SLOT Data::setGrpIndex";
-#endif
-        this->icGrp = i;
-        emit grpChanged(grp->getWidth(), grp->getHeight(), grp->getFrame(icGrp)->data());
-    }
     void setWpeIndex (int i) {
 #ifdef QT_DEBUG
         qDebug() << "SLOT Data::setWpeIndex";
@@ -91,6 +77,7 @@ public slots:
         if (icWpe == i)
             return;
         icWpe = i;
+
         updateColorTable();
     }
     void setMappingIndex (int i) {
@@ -100,6 +87,7 @@ public slots:
         if (icMapping == i)
             return;
         icMapping = i;
+
         updateColorTable();
     }
     void setRemappingIndex (int i) {
@@ -109,6 +97,7 @@ public slots:
         if (icRemapping == i)
             return;
         icRemapping = i;
+
         updateColorTable();
     }
     void setColorCyclingIndex (int i) {
@@ -118,6 +107,7 @@ public slots:
         if (icColorCycling == i)
             return;
         icColorCycling = i;
+
         updateColorTable();
     }
     void setDrawingIndex (int i) {
@@ -125,6 +115,8 @@ public slots:
         qDebug() << "SLOT Data::setDrawingIndex";
 #endif
         drawingIndex = i;
+
+        updateColorTable();
     }
 };
 
