@@ -32,13 +32,13 @@ PalleteWindow::PalleteWindow(QWidget *parent) :
     ui->combo_cc->setCurrentIndex(data->getColorCyclingIndex());
 
     connect(ui->combo_wpe, SIGNAL(currentIndexChanged(int)),
-                                  data, SLOT(setWpeIndex(int)));
+            data, SLOT(setWpeIndex(int)));
     connect(ui->combo_map, SIGNAL(currentIndexChanged(int)),
-                                  data, SLOT(setMappingIndex(int)));
+            data, SLOT(setMappingIndex(int)));
     connect(ui->combo_rem, SIGNAL(currentIndexChanged(int)),
-                                  data, SLOT(setRemappingIndex(int)));
+            data, SLOT(setRemappingIndex(int)));
     connect(ui->combo_cc, SIGNAL(currentIndexChanged(int)),
-                                  data, SLOT(setColorCyclingIndex(int)));
+            data, SLOT(setColorCyclingIndex(int)));
 
 
 

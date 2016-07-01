@@ -10,8 +10,8 @@ PalleteTableWidget::PalleteTableWidget(QWidget *parent) : QFrame(parent)
     data = Data::getInstance();
     memcpy(table, data->getColorTable().constData(), sizeof(table));
 
-    connect(data, SIGNAL(colorTableChanged(QVector<QRgb>)),
-            this, SLOT(updatePallete(QVector<QRgb>)));
+    connect(data, SIGNAL(colorTableChanged()),
+            this, SLOT(updatePallete()));
 }
 
 QSize PalleteTableWidget::minimumSizeHint() const
@@ -84,11 +84,11 @@ void PalleteTableWidget::mouseReleaseEvent(QMouseEvent *event)
     event->accept();
 }
 
-void PalleteTableWidget::updatePallete(QVector<QRgb> rgb)
+void PalleteTableWidget::updatePallete()
 {
 #ifdef QT_DEBUG
     qDebug() << "SLOT PalleteTableWidget::updatePallete";
 #endif
-    memcpy(table, rgb.constData(), sizeof(table));
+    memcpy(table, data->getColorTable().constData(), sizeof(table));
     update();
 }

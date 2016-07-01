@@ -34,7 +34,7 @@ signals:
     void indexChanged(int);
 
 public slots:
-    void updatePallete(QVector<QRgb> rgb);
+    void updatePallete();
 };
 
 #endif // PALLETETABLEWIDGET_H
