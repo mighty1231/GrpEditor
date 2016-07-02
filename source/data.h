@@ -67,6 +67,7 @@ public:
     void updateColorTable ();
 
     int getDrawingIndex() {return drawingIndex;}
+    QRgb getOverflowedColor() {return overflowedColor;}
 
 signals:
     void colorTableChanged();
@@ -119,6 +120,45 @@ public slots:
         drawingIndex = i;
 
         updateColorTable();
+    }
+    void setOverflowR (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setOverflowR";
+#endif
+        int r, g, b;
+        r = i;
+        g = qGreen(overflowedColor);
+        b = qBlue(overflowedColor);
+        overflowedColor = qRgb(r, g, b);
+
+        if (remappings[icRemapping]->getSize() != 256)
+            updateColorTable();
+    }
+    void setOverflowG (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setOverflowG";
+#endif
+        int r, g, b;
+        r = qRed(overflowedColor);
+        g = i;
+        b = qBlue(overflowedColor);
+        overflowedColor = qRgb(r, g, b);
+
+        if (remappings[icRemapping]->getSize() != 256)
+            updateColorTable();
+    }
+    void setOverflowB (int i) {
+#ifdef QT_DEBUG
+        qDebug() << "SLOT Data::setOverflowB";
+#endif
+        int r, g, b;
+        r = qRed(overflowedColor);
+        g = qGreen(overflowedColor);
+        b = i;
+        overflowedColor = qRgb(r, g, b);
+
+        if (remappings[icRemapping]->getSize() != 256)
+            updateColorTable();
     }
 };
 

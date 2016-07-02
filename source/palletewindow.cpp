@@ -41,6 +41,16 @@ PalleteWindow::PalleteWindow(QWidget *parent) :
             data, SLOT(setColorCyclingIndex(int)));
 
 
+    QRgb o = data->getOverflowedColor();
+    ui->overflow_r->setValue(qRed(o));
+    ui->overflow_g->setValue(qGreen(o));
+    ui->overflow_b->setValue(qBlue(o));
+    connect(ui->overflow_r, SIGNAL(valueChanged(int)),
+            data, SLOT(setOverflowR(int)));
+    connect(ui->overflow_g, SIGNAL(valueChanged(int)),
+            data, SLOT(setOverflowG(int)));
+    connect(ui->overflow_b, SIGNAL(valueChanged(int)),
+            data, SLOT(setOverflowB(int)));
 
     palleteTableWidget = new PalleteTableWidget(this);
     ui->layout0->addWidget(palleteTableWidget, 1);
