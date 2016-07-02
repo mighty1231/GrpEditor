@@ -11,6 +11,7 @@ Data::Data() : colorTable(256)
     icColorCycling = 0;
 
     drawingIndex = 0;
+    overflowedColor = qRgb(255, 0, 255);
 }
 Data * Data::getInstance()
 {
@@ -25,12 +26,23 @@ QVector<QRgb> const &Data::getColorTable() const
     return colorTable;
 }
 
+// @TODO: background index
+// @TODO: mapping would be called to load entire table to do more perf.
 void Data::updateColorTable()
 {
+    Remapping *remapping = remappings[icRemapping];
+    int _rem_size = remapping->getSize();
+    QByteArray *remapTable = remapping->allocateTableWithBackground(0);
+
+    int _mapped;
     for (int i=0; i<256; i++){
-        colorTable[i] = wpes[icWpe]->getColor(
-                    mappings[icMapping]->getIndex(i)
-                    );
+        _mapped = mappings[icMapping]->getIndex(i);
+        if (_mapped < _rem_size)
+            colorTable[i] = wpes[icWpe]->getColor(
+                        (unsigned char)(remapTable->at(_mapped)));
+        else
+            colorTable[i] = overflowedColor;
     }
+    delete remapTable;
     emit colorTableChanged();
 }

@@ -54,7 +54,7 @@ int Remapping::getSize()
     return size;
 }
 
-QByteArray * Remapping::getTableOnBackground(int index)
+QByteArray * Remapping::allocateTableWithBackground(int index)
 {
     QByteArray * ba = new QByteArray(size, 0);
     for (int i=0; i<size; i++) {

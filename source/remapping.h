@@ -18,7 +18,7 @@ public:
 
     QString getName();
     int getSize();
-    QByteArray * getTableOnBackground(int index);
+    QByteArray * allocateTableWithBackground(int index);
 };
 
 #endif // REMAPPING_H

@@ -13,6 +13,7 @@ class Data : public QObject
     Q_OBJECT
 
 private:
+    /* Singleton Type */
     static Data * instance;
 
     /* objects
@@ -36,6 +37,7 @@ private:
 
     // brush things
     int drawingIndex;
+    QRgb overflowedColor;
 
     Data();
 public:
