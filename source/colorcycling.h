@@ -29,6 +29,9 @@ public:
 
     QString getName();
     char *getMap();
+
+    bool processTick();
+    quint8 getIndex(int index);
 };
 
 #endif // COLORCYCLING_H

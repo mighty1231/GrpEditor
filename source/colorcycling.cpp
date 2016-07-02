@@ -26,10 +26,12 @@ ColorCycling * ColorCycling::load(QString name, QString fname)
     ColorCycling *colorcycling = new ColorCycling();
     memcpy(colorcycling->entries, ba.data(), 8*16);
     for (int i=0; i<8; i++) {
-        if (colorcycling->entries[i].timer == 0)
+        if (colorcycling->entries[i].period == 0)
             break;
-        if (colorcycling->entries[i].working == 1
-                && colorcycling->entries[i].__unknown8 != 0) {
+        if (colorcycling->entries[i].working != 0
+                && (colorcycling->entries[i].__unknown8 != 0
+                    || colorcycling->entries[i].low
+                    >= colorcycling->entries[i].high)) {
             delete colorcycling;
             return NULL;
         }
@@ -50,3 +52,35 @@ QString ColorCycling::getName()
 {
     return name;
 }
+
+bool ColorCycling::processTick()
+{
+    bool res = false;
+    CycleEntry *cur;
+    for (int i=0; i<8; i++) {
+        cur = &(entries[i]);
+//        qDebug() << i << (unsigned int) cur->period
+//                 << (unsigned int) cur->working
+//                 << (unsigned int) cur->timer;
+        if (cur->period == 0)
+            break;
+        if (cur->working != 0 && --(cur->timer) == 0) {
+            res = true;
+//            qDebug() << "cur timer" << (unsigned int) cur->timer;
+
+            cur->timer = cur->period;
+            char tmp = map[cur->high];
+            memcpy(map+cur->low+1, map+cur->low, cur->high-cur->low);
+            map[cur->low] = tmp;
+        }
+    }
+    return res;
+}
+
+quint8 ColorCycling::getIndex(int index)
+{
+    Q_ASSERT(index >= 0 && index < 256);
+    return map[index];
+}
+
+

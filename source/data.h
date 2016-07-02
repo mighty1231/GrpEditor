@@ -39,6 +39,7 @@ private:
     int drawingIndex;
     QRgb overflowedColor;
 
+    static const int CYCLING_PERIOD = 10;
     Data();
 public:
     static Data * getInstance();
@@ -160,6 +161,7 @@ public slots:
         if (remappings[icRemapping]->getSize() != 256)
             updateColorTable();
     }
+    void cyclingTick();
 };
 
 #endif // DATA_H
