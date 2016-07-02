@@ -23,9 +23,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->act_save_grp, SIGNAL(triggered()), this, SLOT(saveGrp()));
     connect(ui->act_pallete, SIGNAL(toggled(bool)), this, SLOT(openPallete()));
 
-    connect(data, SIGNAL(colorTableChanged()),
-            this, SLOT(updatePallete()));
-
     connect(ui->frameListWidget, SIGNAL(currentRowChanged(int)),
             this, SLOT(frameScrolled(int)));
 
