@@ -45,8 +45,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->downmostFrameButton, SIGNAL(clicked(bool)),
             this, SLOT(frame_downmost()));
 
+    scalingTimer.start();
+
+    ui->grpImageScrollArea->setMouseTracking(true);
     installEventFilter(this);
     ui->grpImageScrollArea->verticalScrollBar()->installEventFilter(this);
+    ui->grpImageScrollArea->installEventFilter(this);
 
     show();
     palleteWindow = NULL;
@@ -141,11 +145,14 @@ void MainWindow::loadColorCycling()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::Wheel) {
-        if (obj != this)
+    if (event->type() == QEvent::Wheel && data->getGrp()) {
+        if (obj == ui->grpImageScrollArea->verticalScrollBar())
             return true;
-        if (data->getGrp() == NULL)
-            return true;
+        if (obj != this || !scalingTimer.hasExpired(40))
+            return QObject::eventFilter(obj, event);
+
+        qDebug() << obj << event;
+        scalingTimer.restart();
 
         int delta = static_cast<QWheelEvent *>(event)->delta();
         if (delta > 0) {
@@ -160,6 +167,13 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         Qt::AspectRatioMode::IgnoreAspectRatio,
                         Qt::FastTransformation)
                     );
+        return true;
+    } else if (event->type() == QEvent::MouseMove
+               && obj == ui->grpImageScrollArea){
+        QMouseEvent *mEvent = static_cast<QMouseEvent *>(event);
+        ui->statusBar->showMessage(
+                    QString::asprintf("x %d y %d",
+                                     mEvent->x(), mEvent->y()));
         return true;
     } else {
         return QObject::eventFilter(obj, event);

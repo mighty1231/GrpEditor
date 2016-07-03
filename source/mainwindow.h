@@ -30,6 +30,7 @@ private:
     PalleteWindow *palleteWindow;
     Ui::MainWindow *ui;
 
+    QElapsedTimer scalingTimer;
     int scaleFactor;
     int grpFrameIndex;
 
