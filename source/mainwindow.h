@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 #include "palletewindow.h"
 #include "data.h"
 
@@ -33,6 +34,9 @@ private:
     QElapsedTimer scalingTimer;
     int scaleFactor;
     int grpFrameIndex;
+
+    QLabel *statusBar_position;
+    QLabel *statusBar_brushStatus;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

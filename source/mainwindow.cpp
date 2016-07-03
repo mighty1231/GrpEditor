@@ -47,10 +47,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     scalingTimer.start();
 
-    ui->grpImageScrollArea->setMouseTracking(true);
     installEventFilter(this);
     ui->grpImageScrollArea->verticalScrollBar()->installEventFilter(this);
-    ui->grpImageScrollArea->installEventFilter(this);
+
+    ui->grpLabel->setMouseTracking(true);
+    ui->grpLabel->installEventFilter(this);
+
+    statusBar_position = new QLabel();
+    statusBar_brushStatus = new QLabel();
+    ui->statusBar->addPermanentWidget(statusBar_position, 1);
+    ui->statusBar->addPermanentWidget(statusBar_brushStatus, 2);
 
     show();
     palleteWindow = NULL;
@@ -168,12 +174,28 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         Qt::FastTransformation)
                     );
         return true;
-    } else if (event->type() == QEvent::MouseMove
-               && obj == ui->grpImageScrollArea){
+    } else if (obj == ui->grpLabel
+               && event->type() == QEvent::MouseMove
+               && data->getGrp()){
         QMouseEvent *mEvent = static_cast<QMouseEvent *>(event);
-        ui->statusBar->showMessage(
-                    QString::asprintf("x %d y %d",
-                                     mEvent->x(), mEvent->y()));
+
+        int x = mEvent->x() / scaleFactor;
+        int y = mEvent->y() / scaleFactor;
+
+        Grp *grp = data->getGrp();
+
+        if (x < 0 || x >= grp->getWidth()
+                || y < 0 || y >= grp->getHeight()) {
+            statusBar_position->clear();
+            return true;
+        }
+
+        QByteArray *frame = grp->getFrame(grpFrameIndex);
+
+        quint8 color = (quint8) frame->at(grp->getWidth()*y+x);
+        statusBar_position->setText(
+                    QString::asprintf("(%d, %d), index %d",
+                                     x, y, color));
         return true;
     } else {
         return QObject::eventFilter(obj, event);
