@@ -18,11 +18,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void loadWpe();
-    void loadMapping();
-    void loadRemapping();
-    void loadColorCycling();
-
 private:
     QImage *grpImage;
     QPixmap grpPixmap;

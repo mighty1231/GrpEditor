@@ -35,6 +35,11 @@ private:
 
     QVector<QRgb> colorTable;
 
+    void loadWpe();
+    void loadMapping();
+    void loadRemapping();
+    void loadColorCycling();
+
     // brush things
     int drawingIndex;
     QRgb overflowedColor;
@@ -49,10 +54,10 @@ public:
     QString getGrpPath() {return grpPath;}
     void setGrpPath(QString qs) {grpPath = qs;}
 
-    void appendWpe(Wpe *wpe) {wpes.append(wpe);}
-    void appendMapping (Mapping *map) {mappings.append(map);}
-    void appendRemapping (Remapping *rem) {remappings.append(rem);}
-    void appendColorCycling (ColorCycling *cc) {colorCyclings.append(cc);}
+//    void appendWpe(Wpe *wpe) {wpes.append(wpe);}
+//    void appendMapping (Mapping *map) {mappings.append(map);}
+//    void appendRemapping (Remapping *rem) {remappings.append(rem);}
+//    void appendColorCycling (ColorCycling *cc) {colorCyclings.append(cc);}
 
     QVector<Wpe *> const &getWpes() const {return wpes;}
     QVector<Mapping *> const &getMappings() const {return mappings;}

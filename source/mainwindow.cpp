@@ -10,10 +10,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     /* load data files */
     data = Data::getInstance();
-    loadWpe();
-    loadMapping();
-    loadRemapping();
-    loadColorCycling();
     data->updateColorTable();
     connect(data, SIGNAL(colorTableChanged()),
             this, SLOT(updatePallete()));
@@ -61,92 +57,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     show();
     palleteWindow = NULL;
     openPallete();
-}
-
-void MainWindow::loadWpe()
-{
-
-    /* wpe */
-    data->appendWpe(Wpe::loadDefault());
-    QDir dir("data/wpe/");
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    QStringList filters;
-    filters << "*.wpe";
-    dir.setNameFilters(filters);
-    QDirIterator iter(dir);
-    while (iter.hasNext()) {
-        iter.next();
-        Wpe *wpe = Wpe::load(iter.fileInfo().completeBaseName(),
-                             iter.filePath());
-        if (wpe == NULL) {
-            /* fail */
-        } else {
-            data->appendWpe(wpe);
-        }
-    }
-}
-
-void MainWindow::loadMapping()
-{
-    data->appendMapping(Mapping::loadDefault());
-    QDir dir("data/mapping/");
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    QStringList filters;
-    filters << "*.mapping";
-    dir.setNameFilters(filters);
-    QDirIterator iter(dir);
-    while (iter.hasNext()) {
-        iter.next();
-        Mapping *mapping = Mapping::load(iter.fileInfo().completeBaseName(),
-                             iter.filePath());
-        if (mapping == NULL) {
-            /* fail */
-        } else {
-            data->appendMapping(mapping);
-        }
-    }
-}
-
-void MainWindow::loadRemapping()
-{
-    data->appendRemapping(Remapping::loadDefault());
-    QDir dir("data/remapping/");
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    QStringList filters;
-    filters << "*.remapping";
-    dir.setNameFilters(filters);
-    QDirIterator iter(dir);
-    while (iter.hasNext()) {
-        iter.next();
-        Remapping *remapping = Remapping::load(iter.fileInfo().completeBaseName(),
-                             iter.filePath());
-        if (remapping == NULL) {
-            /* fail */
-        } else {
-            data->appendRemapping(remapping);
-        }
-    }
-}
-
-void MainWindow::loadColorCycling()
-{
-    data->appendColorCycling(ColorCycling::loadDefault());
-    QDir dir("data/colorcycling/");
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    QStringList filters;
-    filters << "*.colorcycling";
-    dir.setNameFilters(filters);
-    QDirIterator iter(dir);
-    while (iter.hasNext()) {
-        iter.next();
-        ColorCycling *colorCycling = ColorCycling::load(iter.fileInfo().completeBaseName(),
-                             iter.filePath());
-        if (colorCycling == NULL) {
-            /* fail */
-        } else {
-            data->appendColorCycling(colorCycling);
-        }
-    }
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
