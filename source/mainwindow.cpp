@@ -194,7 +194,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
         quint8 color = (quint8) frame->at(grp->getWidth()*y+x);
         statusBar_position->setText(
-                    QString::asprintf("(%d, %d), index %d",
+                    QString::asprintf("(%d, %d), color #%d",
                                      x, y, color));
         return true;
     } else {
