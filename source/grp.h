@@ -28,6 +28,7 @@ private:
 public:
     ~Grp();
     static Grp * load(QString fname);
+    static Grp * loadEmpty(int width, int height);
     void save(QString fname);
 
     int getWidth() {return width;}

@@ -134,6 +134,17 @@ Grp * Grp::load(QString fname)
     return grp;
 }
 
+Grp *Grp::loadEmpty(int _width, int _height)
+{
+    if (_width < 0 || _width > 65536
+            || _height < 0 || _height > 65536) {
+        return NULL;
+    }
+
+    Grp *grp = new Grp(1, _width, _height);
+    return grp;
+}
+
 void Grp::save(QString fname)
 {
     QFile file(fname);

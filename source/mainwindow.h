@@ -5,6 +5,7 @@
 #include <QLabel>
 #include "palletewindow.h"
 #include "data.h"
+#include "grpconfigdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,15 +31,24 @@ private:
     int scaleFactor;
     int grpFrameIndex;
 
+    GrpConfigDialog *grpConfigDialog;
+
     QLabel *statusBar_position;
     QLabel *statusBar_brushStatus;
+
+    bool checkForUnsaved();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 public slots:
+    void newGrp();
     void loadGrp();
     void saveGrp();
+    void saveAsGrp();
+
+    void newGrp_ok(int, int);
+    void newGrp_cancel();
 
     void openPallete();
     void palleteClosed();

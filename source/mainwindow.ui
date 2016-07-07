@@ -155,11 +155,11 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="act_new"/>
+    <addaction name="act_new_grp"/>
     <addaction name="act_open_grp"/>
     <addaction name="separator"/>
     <addaction name="act_save_grp"/>
-    <addaction name="act_save_as"/>
+    <addaction name="act_save_as_grp"/>
    </widget>
    <widget class="QMenu" name="menuTool">
     <property name="title">
@@ -184,7 +184,7 @@
     <string>Open .grp</string>
    </property>
   </action>
-  <action name="act_new">
+  <action name="act_new_grp">
    <property name="text">
     <string>New</string>
    </property>
@@ -194,7 +194,7 @@
     <string>Save</string>
    </property>
   </action>
-  <action name="act_save_as">
+  <action name="act_save_as_grp">
    <property name="text">
     <string>Save As...</string>
    </property>

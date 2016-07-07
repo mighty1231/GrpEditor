@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     grp.cpp \
     remapping.cpp \
     colorcycling.cpp \
-    palletetablewidget.cpp
+    palletetablewidget.cpp \
+    grpconfigdialog.cpp
 
 HEADERS  += mainwindow.h \
     globals.h \
@@ -33,7 +34,9 @@ HEADERS  += mainwindow.h \
     grp.h \
     remapping.h \
     colorcycling.h \
-    palletetablewidget.h
+    palletetablewidget.h \
+    grpconfigdialog.h
 
 FORMS    += mainwindow.ui \
-    palletewindow.ui
+    palletewindow.ui \
+    grpconfigdialog.ui

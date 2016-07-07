@@ -15,8 +15,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
             this, SLOT(updatePallete()));
 
     ui->grpImageScrollArea->setBackgroundRole(QPalette::Dark);
+    connect(ui->act_new_grp, SIGNAL(triggered()), this, SLOT(newGrp()));
     connect(ui->act_open_grp, SIGNAL(triggered()), this, SLOT(loadGrp()));
     connect(ui->act_save_grp, SIGNAL(triggered()), this, SLOT(saveGrp()));
+    connect(ui->act_save_as_grp, SIGNAL(triggered()), this, SLOT(saveAsGrp()));
     connect(ui->act_pallete, SIGNAL(toggled(bool)), this, SLOT(openPallete()));
 
     connect(ui->frameListWidget, SIGNAL(currentRowChanged(int)),
@@ -56,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     show();
     palleteWindow = NULL;
+    grpConfigDialog = NULL;
     openPallete();
 }
 
@@ -112,11 +115,78 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     }
 }
 
+bool MainWindow::checkForUnsaved()
+{
+    /* if grp is already loaded, warning message box */
+    if (data->getGrp() != NULL) {
+        /* @TODO Warning for only grp is modified by user */
+        QMessageBox::StandardButton rep;
+        rep = QMessageBox::warning(this, "Warning", "If you had modified grp, you had to save it. Did you check?",
+                                   QMessageBox::Yes|QMessageBox::No);
+        return (rep == QMessageBox::Yes);
+    }
+
+    return true;
+}
+
+void MainWindow::newGrp()
+{
+    if (grpConfigDialog != NULL) {
+        /* @TODO focus original grpConfigDialog */
+        QMessageBox::warning(this, "New Grp",
+                             "You already have window for it!",
+                             QMessageBox::Ok);
+        return;
+    }
+
+    if (!checkForUnsaved())
+        return;
+
+    grpConfigDialog = new GrpConfigDialog(this);
+
+    connect(grpConfigDialog, SIGNAL(ok(int, int)),
+            this, SLOT(newGrp_ok(int, int)));
+    connect(grpConfigDialog, SIGNAL(cancel()),
+            this, SLOT(newGrp_cancel()));
+    grpConfigDialog->show();
+
+
+//    grpFrameIndex = 0;
+//    scaleFactor = 1;
+//    updatePixel();
+//    data->setGrp(Grp::loadEmpty());
+//    grpImage =
+}
+
+void MainWindow::newGrp_ok(int width, int height)
+{
+    data->setGrp(Grp::loadEmpty(width, height));
+    data->setGrpPath(QString());
+    ui->frameListWidget->blockSignals(true);
+    ui->frameListWidget->clear();
+    ui->frameListWidget->addItem(QString::asprintf("Frame #%u", 0));
+    ui->frameListWidget->setCurrentRow(0);
+    ui->frameListWidget->blockSignals(false);
+    grpFrameIndex = 0;
+    scaleFactor = 1;
+
+    updatePixel();
+    grpConfigDialog = NULL;
+}
+
+void MainWindow::newGrp_cancel()
+{
+    grpConfigDialog = NULL;
+}
+
 void MainWindow::loadGrp()
 {
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::loadGrp";
 #endif
+    if (!checkForUnsaved())
+        return;
+
     QString fname = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
@@ -156,9 +226,28 @@ void MainWindow::saveGrp()
 #endif
 
     QString path = data->getGrpPath();
-    qDebug() << "path" << path;
+    if (path.isEmpty()) {
+        saveAsGrp();
+    } else {
+        qDebug() << "path" << path;
 
-    data->getGrp()->save(path);
+        data->getGrp()->save(path);
+    }
+}
+
+void MainWindow::saveAsGrp()
+{
+#ifdef QT_DEBUG
+    qDebug() << "SLOT MainWindow::saveAsGrp";
+#endif
+
+    QString fname = QFileDialog::getSaveFileName(
+                this,
+                tr("Save As"),
+                tr(""),
+                tr("Grp files (*.grp)"));
+    data->setGrpPath(fname);
+    data->getGrp()->save(fname);
 }
 
 void MainWindow::openPallete()
