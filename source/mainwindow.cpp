@@ -348,8 +348,13 @@ void MainWindow::frame_new()
         return;
 
     grp->insertFrame(grpFrameIndex+1);
+    grpFrameIndex++;
     ui->frameListWidget->addItem(QString::asprintf("Frame #%u", grp->getFrameCount()-1));
-    ui->frameListWidget->setCurrentRow(grpFrameIndex+1);
+    ui->frameListWidget->blockSignals(true);
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
+    ui->frameListWidget->blockSignals(false);
+
+    updatePixel();
 }
 
 void MainWindow::frame_load()
@@ -376,9 +381,10 @@ void MainWindow::frame_copy()
         return;
 
     grp->copyFrame(grpFrameIndex);
+    grpFrameIndex++;
     ui->frameListWidget->blockSignals(true);
     ui->frameListWidget->addItem(QString::asprintf("Frame #%u", grp->getFrameCount()-1));
-    ui->frameListWidget->setCurrentRow(grpFrameIndex+1);
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
     ui->frameListWidget->blockSignals(false);
 }
 
@@ -395,9 +401,10 @@ void MainWindow::frame_delete()
     if (grp->getFrameCount() == 1)
         return;
     grp->deleteFrame(grpFrameIndex);
+    grpFrameIndex = (grpFrameIndex == 0)?0:grpFrameIndex-1;
     ui->frameListWidget->blockSignals(true);
     delete ui->frameListWidget->takeItem(grp->getFrameCount());
-    ui->frameListWidget->setCurrentRow((grpFrameIndex == 0)?0:grpFrameIndex-1);
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
     ui->frameListWidget->blockSignals(false);
 
     updatePixel();
@@ -415,8 +422,9 @@ void MainWindow::frame_up()
     if (grpFrameIndex == 0)
         return;
     grp->swapFrame(grpFrameIndex, grpFrameIndex-1);
+    grpFrameIndex--;
     ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex-1);
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
     ui->frameListWidget->blockSignals(false);
 }
 
@@ -432,8 +440,9 @@ void MainWindow::frame_down()
     if (grpFrameIndex == grp->getFrameCount()-1)
         return;
     grp->swapFrame(grpFrameIndex, grpFrameIndex+1);
+    grpFrameIndex++;
     ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex+1);
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
     ui->frameListWidget->blockSignals(false);
 }
 
@@ -449,8 +458,9 @@ void MainWindow::frame_upmost()
     if (grpFrameIndex == 0)
         return;
     grp->upmostFrame(grpFrameIndex);
+    grpFrameIndex = 0; // @Think
     ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(0); // @Think
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
     ui->frameListWidget->blockSignals(false);
 }
 
@@ -466,8 +476,9 @@ void MainWindow::frame_downmost()
     if (grpFrameIndex == grp->getFrameCount()-1)
         return;
     grp->downmostFrame(grpFrameIndex);
+    grpFrameIndex = grp->getFrameCount()-1; // @Think
     ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grp->getFrameCount()-1); // @Think
+    ui->frameListWidget->setCurrentRow(grpFrameIndex);
     ui->frameListWidget->blockSignals(false);
 }
 
