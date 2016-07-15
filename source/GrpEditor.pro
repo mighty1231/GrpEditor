@@ -12,31 +12,31 @@ TARGET = GrpEditor
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += main.cpp \
     globals.cpp \
-    palletewindow.cpp \
-    wpe.cpp \
-    mapping.cpp \
     data.cpp \
-    grp.cpp \
-    remapping.cpp \
-    colorcycling.cpp \
-    palletetablewidget.cpp \
-    grpconfigdialog.cpp
+    widget/mainwindow.cpp \
+    widget/palletewindow.cpp \
+    widget/palletetablewidget.cpp \
+    widget/grpconfigdialog.cpp \
+    comp/grp.cpp \
+    comp/mapping.cpp \
+    comp/remapping.cpp \
+    comp/wpe.cpp \
+    comp/colorcycling.cpp
 
-HEADERS  += mainwindow.h \
-    globals.h \
-    palletewindow.h \
-    wpe.h \
-    mapping.h \
+HEADERS  += globals.h \
     data.h \
-    grp.h \
-    remapping.h \
-    colorcycling.h \
-    palletetablewidget.h \
-    grpconfigdialog.h
+    widget/mainwindow.h \
+    widget/palletewindow.h \
+    widget/palletetablewidget.h \
+    widget/grpconfigdialog.h \
+    comp/grp.h \
+    comp/mapping.h \
+    comp/remapping.h \
+    comp/wpe.h \
+    comp/colorcycling.h
 
-FORMS    += mainwindow.ui \
-    palletewindow.ui \
-    grpconfigdialog.ui
+FORMS    += form/mainwindow.ui \
+    form/palletewindow.ui \
+    form/grpconfigdialog.ui
