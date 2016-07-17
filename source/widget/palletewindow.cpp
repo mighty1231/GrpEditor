@@ -54,7 +54,6 @@ PalleteWindow::PalleteWindow(QWidget *parent) :
 
     palleteTableWidget = new PalleteTableWidget(this);
     ui->layout0->addWidget(palleteTableWidget, 1);
-//    ui->palleteLabel->setPixmap();
     connect(palleteTableWidget, SIGNAL(indexChanged(int)),
             data, SLOT(setDrawingIndex(int)));
 }

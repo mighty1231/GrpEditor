@@ -59,15 +59,10 @@ bool ColorCycling::processTick()
     CycleEntry *cur;
     for (int i=0; i<8; i++) {
         cur = &(entries[i]);
-//        qDebug() << i << (unsigned int) cur->period
-//                 << (unsigned int) cur->working
-//                 << (unsigned int) cur->timer;
         if (cur->period == 0)
             break;
         if (cur->working != 0 && --(cur->timer) == 0) {
             res = true;
-//            qDebug() << "cur timer" << (unsigned int) cur->timer;
-
             cur->timer = cur->period;
             char tmp = map[cur->high];
             memcpy(map+cur->low+1, map+cur->low, cur->high-cur->low);

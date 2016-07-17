@@ -13,7 +13,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    globals.cpp \
     data.cpp \
     widget/mainwindow.cpp \
     widget/palletewindow.cpp \

@@ -143,9 +143,6 @@ void Data::updateColorTable()
 
 void Data::cyclingTick()
 {
-#ifdef QT_DEBUG
-//        qDebug() << "SLOT Data::cyclingTick";
-#endif
     if (colorCyclings[icColorCycling]->processTick()){
         updateColorTable();
     }

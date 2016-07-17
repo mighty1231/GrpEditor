@@ -149,13 +149,6 @@ void MainWindow::newGrp()
     connect(grpConfigDialog, SIGNAL(cancel()),
             this, SLOT(newGrp_cancel()));
     grpConfigDialog->show();
-
-
-//    grpFrameIndex = 0;
-//    scaleFactor = 1;
-//    updatePixel();
-//    data->setGrp(Grp::loadEmpty());
-//    grpImage =
 }
 
 void MainWindow::newGrp_ok(int width, int height)
@@ -192,6 +185,8 @@ void MainWindow::loadGrp()
                 tr("Open File"),
                 tr(""),
                 tr("Grp files (*.grp)"));
+
+    if (fname.isEmpty()) return;
     qDebug() << fname;
 
     Grp *new_grp = Grp::load(fname);
