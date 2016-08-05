@@ -167,7 +167,13 @@
     </property>
     <addaction name="act_pallete"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuTool"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">

@@ -7,6 +7,7 @@
 #include "data.h"
 #include "grpconfigdialog.h"
 
+class QUndoStack;
 namespace Ui {
 class MainWindow;
 }
@@ -35,6 +36,10 @@ private:
 
     QLabel *statusBar_position;
     QLabel *statusBar_brushStatus;
+
+    QUndoStack *undoStack;
+    QAction *undoAction;
+    QAction *redoAction;
 
     bool checkForUnsaved();
 

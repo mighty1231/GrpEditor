@@ -51,6 +51,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->grpLabel->setMouseTracking(true);
     ui->grpLabel->installEventFilter(this);
 
+    // Undo framework
+    undoStack = new QUndoStack(this);
+    undoAction = undoStack->createUndoAction(this, tr("&Undo"));
+    undoAction->setShortcut(QKeySequence::Undo);
+    redoAction = undoStack->createRedoAction(this, tr("&Undo"));
+    redoAction->setShortcut(QKeySequence::Redo);
+    ui->menuEdit->addAction(undoAction);
+    ui->menuEdit->addAction(redoAction);
+
+    // ui
     statusBar_position = new QLabel();
     statusBar_brushStatus = new QLabel();
     ui->statusBar->addPermanentWidget(statusBar_position, 1);
@@ -165,6 +175,9 @@ void MainWindow::newGrp_ok(int width, int height)
 
     updatePixel();
     grpConfigDialog = NULL;
+
+    // Undo framework
+    undoStack->clear();
 }
 
 void MainWindow::newGrp_cancel()
@@ -212,6 +225,9 @@ void MainWindow::loadGrp()
     grpFrameIndex = 0;
     scaleFactor = 1;
     updatePixel();
+
+    // Undo framework
+    undoStack->clear();
 }
 
 void MainWindow::saveGrp()
@@ -341,6 +357,8 @@ void MainWindow::frame_new()
     Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
+
+    undoStack->push(new CreateFrameCommand());
 
     grp->insertFrame(grpFrameIndex+1);
     grpFrameIndex++;

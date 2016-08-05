@@ -1,11 +1,11 @@
 #ifndef DATA_H
 #define DATA_H
 
-#include "comp/wpe.h"
-#include "comp/mapping.h"
-#include "comp/remapping.h"
-#include "comp/colorcycling.h"
-#include "comp/grp.h"
+#include "component/wpe.h"
+#include "component/mapping.h"
+#include "component/remapping.h"
+#include "component/colorcycling.h"
+#include "component/grp.h"
 
 
 class Data : public QObject
