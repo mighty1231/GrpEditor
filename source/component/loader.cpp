@@ -1,17 +1,18 @@
-#include "data.h"
+#include "loader.h"
+#include "widget/mainwindow.h"
+#include "component/wpe.h"
+#include "component/mapping.h"
+#include "component/remapping.h"
+#include "component/colorcycling.h"
 
-Data * Data::instance = NULL;
-Data::Data() : colorTable(256)
+ComponentLoader::ComponentLoader(MainWindow *mw) : colorTable(256)
 {
-    grp = NULL;
-
     icWpe = 0;
     icMapping = 0;
     icRemapping = 0;
     icColorCycling = 0;
 
-    drawingIndex = 0;
-    overflowedColor = qRgb(255, 0, 255);
+    overflowedColor = mw->getOverflowedColor();
 
     loadWpe();
     loadMapping();
@@ -19,9 +20,11 @@ Data::Data() : colorTable(256)
     loadColorCycling();
 
     QTimer::singleShot(CYCLING_PERIOD, this, SLOT(cyclingTick()));
+
+    updateColorTable();
 }
 
-void Data::loadWpe()
+void ComponentLoader::loadWpe()
 {
     /* wpe */
     wpes.append(Wpe::loadDefault());
@@ -43,7 +46,7 @@ void Data::loadWpe()
     }
 }
 
-void Data::loadMapping()
+void ComponentLoader::loadMapping()
 {
     mappings.append(Mapping::loadDefault());
     QDir dir("data/mapping/");
@@ -64,7 +67,7 @@ void Data::loadMapping()
     }
 }
 
-void Data::loadRemapping()
+void ComponentLoader::loadRemapping()
 {
     remappings.append(Remapping::loadDefault());
     QDir dir("data/remapping/");
@@ -85,7 +88,7 @@ void Data::loadRemapping()
     }
 }
 
-void Data::loadColorCycling()
+void ComponentLoader::loadColorCycling()
 {
     colorCyclings.append(ColorCycling::loadDefault());
     QDir dir("data/colorcycling/");
@@ -106,22 +109,14 @@ void Data::loadColorCycling()
     }
 }
 
-Data * Data::getInstance()
-{
-    if (instance == NULL) {
-        instance = new Data();
-    }
-    return instance;
-}
-
-QVector<QRgb> const &Data::getColorTable() const
+QVector<QRgb> const &ComponentLoader::getColorTable() const
 {
     return colorTable;
 }
 
 // @TODO: background index
 // @TODO: mapping would be called to load entire table to do more perf.
-void Data::updateColorTable()
+void ComponentLoader::updateColorTable()
 {
     Remapping *remapping = remappings[icRemapping];
     int _rem_size = remapping->getSize();
@@ -135,18 +130,17 @@ void Data::updateColorTable()
                         colorCyclings[icColorCycling]->getIndex(
                             (unsigned char)(remapTable->at(_mapped))));
         else
-            colorTable[i] = overflowedColor;
+            colorTable[i] = mw->getOverflowedColor();
     }
     delete remapTable;
     emit colorTableChanged();
 }
 
-void Data::cyclingTick()
+void ComponentLoader::cyclingTick()
 {
     if (colorCyclings[icColorCycling]->processTick()){
         updateColorTable();
     }
-
 
     QTimer::singleShot(CYCLING_PERIOD, this, SLOT(cyclingTick()));
 }

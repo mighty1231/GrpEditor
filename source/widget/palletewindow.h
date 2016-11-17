@@ -3,26 +3,28 @@
 
 #include <QMainWindow>
 #include <QCloseEvent>
-#include "data.h"
-#include "palletetablewidget.h"
 
 namespace Ui {
 class PalleteWindow;
 }
+
+class MainWindow;
+class ComponentLoader;
+class PalleteTableWidget;
 
 class PalleteWindow : public QMainWindow
 {
     Q_OBJECT
 
 private:
-    Data *data;
+    ComponentLoader *loader;
     PalleteTableWidget *palleteTableWidget;
     Ui::PalleteWindow *ui;
 
     void closeEvent(QCloseEvent *event);
 
 public:
-    explicit PalleteWindow(QWidget *parent = 0);
+    explicit PalleteWindow(MainWindow *mw, QWidget *parent = 0);
     ~PalleteWindow();
 
 signals:

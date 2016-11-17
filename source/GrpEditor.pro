@@ -13,28 +13,34 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    data.cpp \
     widget/mainwindow.cpp \
     widget/palletewindow.cpp \
     widget/palletetablewidget.cpp \
     widget/grpconfigdialog.cpp \
-    comp/grp.cpp \
-    comp/mapping.cpp \
-    comp/remapping.cpp \
-    comp/wpe.cpp \
-    comp/colorcycling.cpp
+    component/grp.cpp \
+    component/mapping.cpp \
+    component/remapping.cpp \
+    component/wpe.cpp \
+    component/colorcycling.cpp \
+    command/createframecommand.cpp \
+    component/grpframe.cpp \
+    component/loader.cpp \
+    command/deleteframecommand.cpp
 
 HEADERS  += globals.h \
-    data.h \
     widget/mainwindow.h \
     widget/palletewindow.h \
     widget/palletetablewidget.h \
     widget/grpconfigdialog.h \
-    comp/grp.h \
-    comp/mapping.h \
-    comp/remapping.h \
-    comp/wpe.h \
-    comp/colorcycling.h
+    component/grp.h \
+    component/mapping.h \
+    component/remapping.h \
+    component/wpe.h \
+    component/colorcycling.h \
+    command/createframecommand.h \
+    component/grpframe.h \
+    component/loader.h \
+    command/deleteframecommand.h
 
 FORMS    += form/mainwindow.ui \
     form/palletewindow.ui \

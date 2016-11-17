@@ -1,17 +1,33 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QtCore>
-#include <QtWidgets>
+#include "component/loader.h"
+#include <QScrollBar>
+#include <QUndoStack>
+#include <QEvent>
+#include <QWheelEvent>
+#include <QMouseEvent>
+#include <QMessageBox>
+#include <QFileDialog>
+#include "component/grp.h"
+#include "component/grpframe.h"
+#include "component/remapping.h"
+#include "widget/grpconfigdialog.h"
+#include "widget/palletewindow.h"
+#include "command/createframecommand.h"
+#include "command/deleteframecommand.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow), scaleFactor(1), grpImage(NULL)
 {
     ui->setupUi(this);
 
-    /* load data files */
-    data = Data::getInstance();
-    data->updateColorTable();
-    connect(data, SIGNAL(colorTableChanged()),
+    grp = NULL;
+    drawingIndex = 0;
+    overflowedColor = qRgb(255, 0, 255);
+
+    /* load component files */
+    loader = new ComponentLoader(this);
+    connect(loader, SIGNAL(colorTableChanged()),
             this, SLOT(updatePallete()));
 
     ui->grpImageScrollArea->setBackgroundRole(QPalette::Dark);
@@ -51,6 +67,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->grpLabel->setMouseTracking(true);
     ui->grpLabel->installEventFilter(this);
 
+    // Undo framework
+    undoStack = new QUndoStack(this);
+    undoAction = undoStack->createUndoAction(this, tr("&Undo"));
+    undoAction->setShortcut(QKeySequence::Undo);
+    redoAction = undoStack->createRedoAction(this, tr("&Undo"));
+    redoAction->setShortcut(QKeySequence::Redo);
+    ui->menuEdit->addAction(undoAction);
+    ui->menuEdit->addAction(redoAction);
+
+    // ui
     statusBar_position = new QLabel();
     statusBar_brushStatus = new QLabel();
     ui->statusBar->addPermanentWidget(statusBar_position, 1);
@@ -59,12 +85,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     show();
     palleteWindow = NULL;
     grpConfigDialog = NULL;
+    frameListWidget = ui->frameListWidget;
     openPallete();
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::Wheel && data->getGrp()) {
+    if (event->type() == QEvent::Wheel && grp) {
         if (obj == ui->grpImageScrollArea->verticalScrollBar())
             return true;
         if (obj != this || !scalingTimer.hasExpired(40))
@@ -89,13 +116,11 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
         return true;
     } else if (obj == ui->grpLabel
                && event->type() == QEvent::MouseMove
-               && data->getGrp()){
+               && grp){
         QMouseEvent *mEvent = static_cast<QMouseEvent *>(event);
 
         int x = mEvent->x() / scaleFactor;
         int y = mEvent->y() / scaleFactor;
-
-        Grp *grp = data->getGrp();
 
         if (x < 0 || x >= grp->getWidth()
                 || y < 0 || y >= grp->getHeight()) {
@@ -103,9 +128,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             return true;
         }
 
-        QByteArray *frame = grp->getFrame(grpFrameIndex);
+        GrpFrame *frame = grp->getFrame(grpFrameIndex);
 
-        quint8 color = (quint8) frame->at(grp->getWidth()*y+x);
+        quint8 color = (quint8) frame->at(x, y);
         statusBar_position->setText(
                     QString::asprintf("(%d, %d), color #%d",
                                      x, y, color));
@@ -118,7 +143,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 bool MainWindow::checkForUnsaved()
 {
     /* if grp is already loaded, warning message box */
-    if (data->getGrp() != NULL) {
+    if (grp != NULL) {
         /* @TODO Warning for only grp is modified by user */
         QMessageBox::StandardButton rep;
         rep = QMessageBox::warning(this, "Warning", "If you had modified grp, you had to save it. Did you check?",
@@ -153,8 +178,9 @@ void MainWindow::newGrp()
 
 void MainWindow::newGrp_ok(int width, int height)
 {
-    data->setGrp(Grp::loadEmpty(width, height));
-    data->setGrpPath(QString());
+    grp = Grp::loadEmpty(width, height);
+    grpPath.clear();
+
     ui->frameListWidget->blockSignals(true);
     ui->frameListWidget->clear();
     ui->frameListWidget->addItem(QString::asprintf("Frame #%u", 0));
@@ -165,6 +191,9 @@ void MainWindow::newGrp_ok(int width, int height)
 
     updatePixel();
     grpConfigDialog = NULL;
+
+    // Undo framework
+    undoStack->clear();
 }
 
 void MainWindow::newGrp_cancel()
@@ -195,23 +224,25 @@ void MainWindow::loadGrp()
         return;
     }
 
-    Grp *old_grp = data->getGrp();
     ui->frameListWidget->blockSignals(true);
-    if (old_grp != NULL) {
-        delete old_grp;
+    if (grp != NULL) {
+        delete grp;
         ui->frameListWidget->clear();
     }
     for (int i=0; i<new_grp->getFrameCount(); i++) {
-        ui->frameListWidget->addItem(QString::asprintf("Frame #%u", i));
+        ui->frameListWidget->addItem(new_grp->getFrame(i)->getName());
     }
-    data->setGrp(new_grp);
-    data->setGrpPath(fname);
+    grp = new_grp;
+    grpPath = fname;
     ui->frameListWidget->setCurrentRow(0);
     ui->frameListWidget->blockSignals(false);
 
     grpFrameIndex = 0;
     scaleFactor = 1;
     updatePixel();
+
+    // Undo framework
+    undoStack->clear();
 }
 
 void MainWindow::saveGrp()
@@ -220,13 +251,12 @@ void MainWindow::saveGrp()
     qDebug() << "SLOT MainWindow::saveGrp";
 #endif
 
-    QString path = data->getGrpPath();
-    if (path.isEmpty()) {
+    if (grpPath.isEmpty()) {
         saveAsGrp();
     } else {
-        qDebug() << "path" << path;
+        qDebug() << "path" << grpPath;
 
-        data->getGrp()->save(path);
+        grp->save(grpPath);
     }
 }
 
@@ -236,13 +266,12 @@ void MainWindow::saveAsGrp()
     qDebug() << "SLOT MainWindow::saveAsGrp";
 #endif
 
-    QString fname = QFileDialog::getSaveFileName(
+    grpPath = QFileDialog::getSaveFileName(
                 this,
                 tr("Save As"),
                 tr(""),
                 tr("Grp files (*.grp)"));
-    data->setGrpPath(fname);
-    data->getGrp()->save(fname);
+    grp->save(grpPath);
 }
 
 void MainWindow::openPallete()
@@ -252,7 +281,7 @@ void MainWindow::openPallete()
 #endif
 
     if (palleteWindow == NULL) {
-        palleteWindow = new PalleteWindow(this);
+        palleteWindow = new PalleteWindow(this, this);
         connect(palleteWindow, SIGNAL(closing()),
                 this, SLOT(palleteClosed()));
         palleteWindow->show();
@@ -271,7 +300,7 @@ void MainWindow::palleteClosed()
 
 void MainWindow::frameScrolled(int index)
 {
-    if (grpFrameIndex != index && data->getGrp()) {
+    if (grpFrameIndex != index && grp) {
         grpFrameIndex = index;
         updatePixel();
     }
@@ -282,29 +311,28 @@ void MainWindow::updatePixel()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::updatePixel";
 #endif
-    Grp *grp = data->getGrp();
     int width = grp->getWidth();
     int height = grp->getHeight();
-    char *frame = grp->getFrame(grpFrameIndex)->data();
+    GrpFrame *frame = grp->getFrame(grpFrameIndex);
 
     int vertScrollValue = 0;
     int horiScrollValue = 0;
 
     if (grpImage == NULL) {
         grpImage = new QImage(width, height, QImage::Format_Indexed8);
-        grpImage->setColorTable(data->getColorTable());
+        grpImage->setColorTable(loader->getColorTable());
     } else if ((grpImage->width() != width)
                || (grpImage->height() != height)) {
         delete grpImage;
         grpImage = new QImage(width, height, QImage::Format_Indexed8);
-        grpImage->setColorTable(data->getColorTable());
+        grpImage->setColorTable(loader->getColorTable());
     } else {
         vertScrollValue = ui->grpImageScrollArea->verticalScrollBar()->value();
         horiScrollValue = ui->grpImageScrollArea->horizontalScrollBar()->value();
     }
 
     for (int i=0; i<height; i++) {
-        memcpy(grpImage->scanLine(i), frame+i*width, width);
+        memcpy(grpImage->scanLine(i), frame->scanLine(i), width);
     }
     grpPixmap.convertFromImage(*grpImage);
     ui->grpLabel->setPixmap(grpPixmap.scaled(
@@ -324,7 +352,7 @@ void MainWindow::updatePallete()
 #endif
     if (grpImage == NULL)
         return;
-    grpImage->setColorTable(data->getColorTable());
+    grpImage->setColorTable(loader->getColorTable());
     grpPixmap.convertFromImage(*grpImage);
     ui->grpLabel->setPixmap(grpPixmap.scaled(
                                 grpImage->width()*scaleFactor,
@@ -338,18 +366,14 @@ void MainWindow::frame_new()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_new";
 #endif
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
-    grp->insertFrame(grpFrameIndex+1);
-    grpFrameIndex++;
-    ui->frameListWidget->addItem(QString::asprintf("Frame #%u", grp->getFrameCount()-1));
-    ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
-
-    updatePixel();
+    GrpFrame blankFrame("blank", grp->getWidth(), grp->getHeight());
+    QUndoCommand *cmd = new CreateFrameCommand(this,
+                                               grpFrameIndex+1,
+                                               blankFrame);
+    undoStack->push(cmd);
 }
 
 void MainWindow::frame_load()
@@ -371,16 +395,14 @@ void MainWindow::frame_copy()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_copy";
 #endif
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
-    grp->copyFrame(grpFrameIndex);
-    grpFrameIndex++;
-    ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->addItem(QString::asprintf("Frame #%u", grp->getFrameCount()-1));
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
+    GrpFrame copiedFrame(*grp->getFrame(grpFrameIndex));
+    QUndoCommand *cmd = new CreateFrameCommand(this,
+                                               grpFrameIndex+1,
+                                               copiedFrame);
+    undoStack->push(cmd);
 }
 
 void MainWindow::frame_delete()
@@ -388,21 +410,12 @@ void MainWindow::frame_delete()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_delete";
 #endif
-
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
-    if (grp->getFrameCount() == 1)
-        return;
-    grp->deleteFrame(grpFrameIndex);
-    grpFrameIndex = (grpFrameIndex == 0)?0:grpFrameIndex-1;
-    ui->frameListWidget->blockSignals(true);
-    delete ui->frameListWidget->takeItem(grp->getFrameCount());
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
-
-    updatePixel();
+    QUndoCommand *cmd = new DeleteFrameCommand(this,
+                                               grpFrameIndex);
+    undoStack->push(cmd);
 }
 
 void MainWindow::frame_up()
@@ -410,7 +423,6 @@ void MainWindow::frame_up()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_up";
 #endif
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
@@ -428,7 +440,6 @@ void MainWindow::frame_down()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_down";
 #endif
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
@@ -446,7 +457,6 @@ void MainWindow::frame_upmost()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_upmost";
 #endif
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
@@ -464,7 +474,6 @@ void MainWindow::frame_downmost()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_downmost";
 #endif
-    Grp *grp = data->getGrp();
     if (grp == NULL)
         return;
 
@@ -477,6 +486,47 @@ void MainWindow::frame_downmost()
     ui->frameListWidget->blockSignals(false);
 }
 
+void MainWindow::setOverflowR (int i) {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT ComponentLoader::setOverflowR";
+#endif
+    int r, g, b;
+    r = i;
+    g = qGreen(overflowedColor);
+    b = qBlue(overflowedColor);
+    overflowedColor = qRgb(r, g, b);
+
+    if (loader->getRemappings()[loader->getRemappingIndex()]->getSize() != 256)
+        loader->updateColorTable();
+}
+
+void MainWindow::setOverflowG (int i) {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT ComponentLoader::setOverflowG";
+#endif
+    int r, g, b;
+    r = qRed(overflowedColor);
+    g = i;
+    b = qBlue(overflowedColor);
+    overflowedColor = qRgb(r, g, b);
+
+    if (loader->getRemappings()[loader->getRemappingIndex()]->getSize() != 256)
+        loader->updateColorTable();
+}
+
+void MainWindow::setOverflowB (int i) {
+#ifdef QT_DEBUG
+    qDebug() << "SLOT ComponentLoader::setOverflowB";
+#endif
+    int r, g, b;
+    r = qRed(overflowedColor);
+    g = qGreen(overflowedColor);
+    b = i;
+    overflowedColor = qRgb(r, g, b);
+
+    if (loader->getRemappings()[loader->getRemappingIndex()]->getSize() != 256)
+        loader->updateColorTable();
+}
 
 MainWindow::~MainWindow()
 {

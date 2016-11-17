@@ -2,14 +2,29 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QLabel>
-#include "palletewindow.h"
-#include "data.h"
-#include "grpconfigdialog.h"
+#include <QColor>
+#include <QElapsedTimer>
+#include <QPixmap>
+//#include <QLabel>
+//#include <QElapsedTimer>
+//#include <QListWidget>
+//#include "widget/palletewindow.h"
+//#include "widget/grpconfigdialog.h"
+//#include "component/loader.h"
+//#include "command/createframecommand.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+class QLabel;
+class QUndoStack;
+class QListWidget;
+
+class Grp;
+class PalleteWindow;
+class ComponentLoader;
+class GrpConfigDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -19,13 +34,33 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    Grp * getGrp() {return grp;}
+    void setGrp(Grp *grp) {this->grp=grp;}
+    QString getGrpPath() {return grpPath;}
+    void setGrpPath(QString qs) {grpPath = qs;}
+    int getDrawingIndex() {return drawingIndex;}
+    QRgb getOverflowedColor() {return overflowedColor;}
+    ComponentLoader *getLoader() {return loader;}
+
+    int getFrameIndex() {return grpFrameIndex;}
+    void setFrameIndex(int i) {grpFrameIndex = i;}
+    QListWidget *getFrameListWidget() {return frameListWidget;}
+
 private:
+    Grp *grp;
+    QString grpPath;
+
     QImage *grpImage;
     QPixmap grpPixmap;
-    Data *data;
+    ComponentLoader *loader;
 
     PalleteWindow *palleteWindow;
     Ui::MainWindow *ui;
+    QListWidget *frameListWidget; // it could not be directly accessed
+
+    // brush things
+    int drawingIndex;
+    QRgb overflowedColor;
 
     QElapsedTimer scalingTimer;
     int scaleFactor;
@@ -35,6 +70,10 @@ private:
 
     QLabel *statusBar_position;
     QLabel *statusBar_brushStatus;
+
+    QUndoStack *undoStack;
+    QAction *undoAction;
+    QAction *redoAction;
 
     bool checkForUnsaved();
 
@@ -67,6 +106,11 @@ public slots:
 
     void updatePixel();
     void updatePallete();
+
+    void setDrawingIndex(int i) {drawingIndex = i;}
+    void setOverflowR(int i);
+    void setOverflowG(int i);
+    void setOverflowB(int i);
 };
 
 #endif // MAINWINDOW_H

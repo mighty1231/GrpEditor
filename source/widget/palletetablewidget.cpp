@@ -1,16 +1,22 @@
 #include "palletetablewidget.h"
-#include <QtGui>
+#include <QPainter>
+#include <QMouseEvent>
+#include "component/loader.h"
+#include "widget/mainwindow.h"
 
-PalleteTableWidget::PalleteTableWidget(QWidget *parent) : QFrame(parent)
+PalleteTableWidget::PalleteTableWidget(MainWindow *mw,
+                                       ComponentLoader *cl, QWidget *parent)
+    :QFrame(parent), mw(mw)
 {
+    loader = cl;
+
     this->setFrameShape(QFrame::Panel);
     this->setFrameShadow(QFrame::Sunken);
     this->setLineWidth(3);
 
-    data = Data::getInstance();
-    memcpy(table, data->getColorTable().constData(), sizeof(table));
+    memcpy(table, loader->getColorTable().constData(), sizeof(table));
 
-    connect(data, SIGNAL(colorTableChanged()),
+    connect(loader, SIGNAL(colorTableChanged()),
             this, SLOT(updatePallete()));
 }
 
@@ -47,7 +53,7 @@ void PalleteTableWidget::paintEvent(QPaintEvent *event)
         }
     }
 
-    int ind = data->getDrawingIndex();
+    int ind = mw->getDrawingIndex();
     QPen pen(QColor::fromRgb(255, 0, 0));
     pen.setWidth(2);
     painter.setPen(pen);
@@ -89,6 +95,6 @@ void PalleteTableWidget::updatePallete()
 #ifdef QT_DEBUG
     qDebug() << "SLOT PalleteTableWidget::updatePallete";
 #endif
-    memcpy(table, data->getColorTable().constData(), sizeof(table));
+    memcpy(table, loader->getColorTable().constData(), sizeof(table));
     update();
 }

@@ -2,6 +2,7 @@
 #define GRP_H
 
 #include <QtCore>
+class GrpFrame;
 
 class Grp
 {
@@ -10,7 +11,7 @@ private:
     int width;
     int height;
 
-    QVector<QByteArray *> frames;
+    QVector<GrpFrame *> frames;
 
     Grp(int framecount, int width, int height);
     Grp(short framecount, short width, short height);
@@ -34,10 +35,11 @@ public:
     int getWidth() {return width;}
     int getHeight() {return height;}
     int getFrameCount() {return framecount;}
-    QByteArray * getFrame(int i) {return frames[i];}
+    GrpFrame * getFrame(int i) {return frames[i];}
 
     void insertFrame(int i);
-    void insertFrame(int i, QByteArray qb);
+    void insertFrame(int i, GrpFrame *frame);
+    void insertFrame(int i, const GrpFrame &frame);
     void copyFrame(int i);
     void deleteFrame(int i);
     void swapFrame(int i, int j);
