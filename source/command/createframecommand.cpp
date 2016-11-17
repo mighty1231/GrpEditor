@@ -3,27 +3,20 @@
 #include <QListWidget>
 #include <QDebug>
 #include "component/grp.h"
-#include "component/grpframe.h"
 #include "widget/mainwindow.h"
 
 CreateFrameCommand::CreateFrameCommand(MainWindow *mw, int index,
                                        const GrpFrame& frame,
                                        QUndoCommand *parent)
-    : QUndoCommand(parent), mw(mw), index(index)
+    : QUndoCommand(parent), mw(mw), index(index), frame(frame)
 {
 #ifdef QT_DEBUG
     qDebug() << "CreateFrameCommand#" << this << " [" << index << "]";
 #endif
 
     this->listWidget = mw->getFrameListWidget();
-    this->frame = new GrpFrame(frame);
 
     Q_ASSERT(listWidget->currentRow() == mw->getFrameIndex());
-}
-
-CreateFrameCommand::~CreateFrameCommand()
-{
-    delete frame;
 }
 
 void CreateFrameCommand::undo()
@@ -54,10 +47,10 @@ void CreateFrameCommand::redo()
 #endif
 
     Q_ASSERT(listWidget->currentRow() == mw->getFrameIndex());
-    mw->getGrp()->insertFrame(index, new GrpFrame(*frame));
+    mw->getGrp()->insertFrame(index, new GrpFrame(frame));
     mw->setFrameIndex(index);
 
-    listWidget->insertItem(index, frame->getName());
+    listWidget->insertItem(index, frame.getName());
     listWidget->blockSignals(true);
     listWidget->setCurrentRow(index);
     listWidget->blockSignals(false);

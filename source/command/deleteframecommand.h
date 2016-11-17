@@ -2,6 +2,7 @@
 #define DELETEFRAMECOMMAND_H
 
 #include <QUndoCommand>
+#include "component/grpframe.h"
 
 class MainWindow;
 class GrpFrame;
@@ -12,14 +13,13 @@ class DeleteFrameCommand : public QUndoCommand
 public:
     DeleteFrameCommand(MainWindow *mw, int index,
                        QUndoCommand *parent = 0);
-    ~DeleteFrameCommand();
 
     void undo() Q_DECL_OVERRIDE;
     void redo() Q_DECL_OVERRIDE;
 
 private:
     MainWindow *mw;
-    GrpFrame *frame;
+    GrpFrame frame;
     int index;
     QListWidget *listWidget;
 };
