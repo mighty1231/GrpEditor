@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "component/loader.h"
+
 #include <QScrollBar>
 #include <QUndoStack>
 #include <QEvent>
@@ -8,6 +8,8 @@
 #include <QMouseEvent>
 #include <QMessageBox>
 #include <QFileDialog>
+
+#include "component/loader.h"
 #include "component/grp.h"
 #include "component/grpframe.h"
 #include "component/remapping.h"

@@ -5,13 +5,6 @@
 #include <QColor>
 #include <QElapsedTimer>
 #include <QPixmap>
-//#include <QLabel>
-//#include <QElapsedTimer>
-//#include <QListWidget>
-//#include "widget/palletewindow.h"
-//#include "widget/grpconfigdialog.h"
-//#include "component/loader.h"
-//#include "command/createframecommand.h"
 
 namespace Ui {
 class MainWindow;

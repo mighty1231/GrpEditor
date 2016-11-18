@@ -4,13 +4,13 @@
 #include <QMainWindow>
 #include <QCloseEvent>
 
-namespace Ui {
-class PalleteWindow;
-}
-
 class MainWindow;
 class ComponentLoader;
 class PalleteTableWidget;
+
+namespace Ui {
+class PalleteWindow;
+}
 
 class PalleteWindow : public QMainWindow
 {

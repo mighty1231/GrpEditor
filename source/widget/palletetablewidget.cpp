@@ -1,6 +1,8 @@
 #include "palletetablewidget.h"
+
 #include <QPainter>
 #include <QMouseEvent>
+
 #include "component/loader.h"
 #include "widget/mainwindow.h"
 

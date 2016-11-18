@@ -2,6 +2,7 @@
 #define GRP_H
 
 #include <QtCore>
+
 class GrpFrame;
 
 class Grp
