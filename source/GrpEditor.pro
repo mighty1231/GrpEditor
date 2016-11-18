@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     command/createframecommand.cpp \
     component/grpframe.cpp \
     component/loader.cpp \
-    command/deleteframecommand.cpp
+    command/deleteframecommand.cpp \
+    command/swapframecommand.cpp
 
 HEADERS  += globals.h \
     widget/mainwindow.h \
@@ -40,7 +41,8 @@ HEADERS  += globals.h \
     command/createframecommand.h \
     component/grpframe.h \
     component/loader.h \
-    command/deleteframecommand.h
+    command/deleteframecommand.h \
+    command/swapframecommand.h
 
 FORMS    += form/mainwindow.ui \
     form/palletewindow.ui \

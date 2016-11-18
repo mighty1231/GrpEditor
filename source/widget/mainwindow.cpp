@@ -15,6 +15,7 @@
 #include "widget/palletewindow.h"
 #include "command/createframecommand.h"
 #include "command/deleteframecommand.h"
+#include "command/swapframecommand.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow), scaleFactor(1), grpImage(NULL)
@@ -423,16 +424,13 @@ void MainWindow::frame_up()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_up";
 #endif
-    if (grp == NULL)
+    if (grp == NULL || grpFrameIndex == 0)
         return;
 
-    if (grpFrameIndex == 0)
-        return;
-    grp->swapFrame(grpFrameIndex, grpFrameIndex-1);
-    grpFrameIndex--;
-    ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
+    QUndoCommand *cmd = new SwapFrameCommand(this,
+                                             grpFrameIndex,
+                                             grpFrameIndex-1);
+    undoStack->push(cmd);
 }
 
 void MainWindow::frame_down()
@@ -440,16 +438,13 @@ void MainWindow::frame_down()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_down";
 #endif
-    if (grp == NULL)
+    if (grp == NULL || grpFrameIndex == grp->getFrameCount()-1)
         return;
 
-    if (grpFrameIndex == grp->getFrameCount()-1)
-        return;
-    grp->swapFrame(grpFrameIndex, grpFrameIndex+1);
-    grpFrameIndex++;
-    ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
+    QUndoCommand *cmd = new SwapFrameCommand(this,
+                                             grpFrameIndex,
+                                             grpFrameIndex+1);
+    undoStack->push(cmd);
 }
 
 void MainWindow::frame_upmost()
