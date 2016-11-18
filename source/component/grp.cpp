@@ -466,6 +466,23 @@ void Grp::swapFrame(int i, int j)
     frames[j] = tmp;
 }
 
+void Grp::dragFrame(int from, int to)
+{
+    Q_ASSERT(0 <= from && from < framecount);
+    Q_ASSERT(0 <= to && to < framecount);
+    Q_ASSERT(from != to);
+
+    GrpFrame *tmp = frames[from];
+    if (from < to) {
+        for (int c=from; c<to; c++)
+            frames[c] = frames[c+1];
+    } else {
+        for (int c=from; c>to; c--)
+            frames[c] = frames[c-1];
+    }
+    frames[to] = tmp;
+}
+
 void Grp::upmostFrame(int i)
 {
     Q_ASSERT(0 < i && i < framecount);

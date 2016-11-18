@@ -44,6 +44,7 @@ public:
     void copyFrame(int i);
     void deleteFrame(int i);
     void swapFrame(int i, int j);
+    void dragFrame(int from, int to);
     void upmostFrame(int i);
     void downmostFrame(int i);
 };

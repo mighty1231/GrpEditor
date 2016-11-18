@@ -18,6 +18,7 @@
 #include "command/createframecommand.h"
 #include "command/deleteframecommand.h"
 #include "command/swapframecommand.h"
+#include "command/dragframecommand.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow), scaleFactor(1), grpImage(NULL)
@@ -454,16 +455,19 @@ void MainWindow::frame_upmost()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_upmost";
 #endif
-    if (grp == NULL)
+    if (grp == NULL || grpFrameIndex == 0)
         return;
 
-    if (grpFrameIndex == 0)
-        return;
-    grp->upmostFrame(grpFrameIndex);
-    grpFrameIndex = 0; // @Think
-    ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
+    QUndoCommand *cmd = new DragFrameCommand(this,
+                                             grpFrameIndex,
+                                             0);
+    undoStack->push(cmd);
+
+//    grp->upmostFrame(grpFrameIndex);
+//    grpFrameIndex = 0; // @Think
+//    ui->frameListWidget->blockSignals(true);
+//    ui->frameListWidget->setCurrentRow(grpFrameIndex);
+//    ui->frameListWidget->blockSignals(false);
 }
 
 void MainWindow::frame_downmost()
@@ -471,16 +475,18 @@ void MainWindow::frame_downmost()
 #ifdef QT_DEBUG
     qDebug() << "SLOT MainWindow::frame_downmost";
 #endif
-    if (grp == NULL)
+    if (grp == NULL || grpFrameIndex == grp->getFrameCount()-1)
         return;
 
-    if (grpFrameIndex == grp->getFrameCount()-1)
-        return;
-    grp->downmostFrame(grpFrameIndex);
-    grpFrameIndex = grp->getFrameCount()-1; // @Think
-    ui->frameListWidget->blockSignals(true);
-    ui->frameListWidget->setCurrentRow(grpFrameIndex);
-    ui->frameListWidget->blockSignals(false);
+    QUndoCommand *cmd = new DragFrameCommand(this,
+                                             grpFrameIndex,
+                                             grp->getFrameCount()-1);
+    undoStack->push(cmd);
+//    grp->downmostFrame(grpFrameIndex);
+//    grpFrameIndex = grp->getFrameCount()-1; // @Think
+//    ui->frameListWidget->blockSignals(true);
+//    ui->frameListWidget->setCurrentRow(grpFrameIndex);
+//    ui->frameListWidget->blockSignals(false);
 }
 
 void MainWindow::setOverflowR (int i) {
