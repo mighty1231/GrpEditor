@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     component/loader.cpp \
     command/deleteframecommand.cpp \
     command/swapframecommand.cpp \
-    command/dragframecommand.cpp
+    command/dragframecommand.cpp \
+    component/doublefacedrect.cpp
 
 HEADERS  += globals.h \
     widget/mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS  += globals.h \
     component/loader.h \
     command/deleteframecommand.h \
     command/swapframecommand.h \
-    command/dragframecommand.h
+    command/dragframecommand.h \
+    component/doublefacedrect.h
 
 FORMS    += form/mainwindow.ui \
     form/palletewindow.ui \

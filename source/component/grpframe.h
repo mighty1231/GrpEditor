@@ -17,6 +17,12 @@ public:
     GrpFrame(QString name, int width, int height, QByteArray *ba);
     GrpFrame(const GrpFrame &);
 
+    int getWidth();
+    int getHeight();
+
+    GrpFrame & operator=(const GrpFrame &frame);
+
+    /* @TODO need to review necessity of below functions */
     char at(int t);
     char at(int i, int j);
     char * scanLine(int j);
@@ -26,8 +32,6 @@ public:
 
     QString getName();
     QByteArray * getContent();
-
-    GrpFrame & operator=(const GrpFrame &frame);
 };
 
 #endif // GRPFRAME_H

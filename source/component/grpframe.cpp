@@ -31,6 +31,28 @@ GrpFrame::GrpFrame(const GrpFrame &frame)
     this->content = new QByteArray(*frame.content);
 }
 
+
+GrpFrame & GrpFrame::operator=(const GrpFrame & other)
+{
+    if (this != &other) {
+        name = other.name;
+        width = other.width;
+        height = other.height;
+        content = new QByteArray(*other.content);
+    }
+    return *this;
+}
+
+int GrpFrame::getWidth()
+{
+    return width;
+}
+
+int GrpFrame::getHeight()
+{
+    return height;
+}
+
 char GrpFrame::at(int t)
 {
     Q_ASSERT(0 <= t && t < width*height);
@@ -71,15 +93,4 @@ QString GrpFrame::getName()
 QByteArray * GrpFrame::getContent()
 {
     return new QByteArray(*content);
-}
-
-GrpFrame & GrpFrame::operator=(const GrpFrame & other)
-{
-    if (this != &other) {
-        name = other.name;
-        width = other.width;
-        height = other.height;
-        content = new QByteArray(*other.content);
-    }
-    return *this;
 }
