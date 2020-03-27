@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GrpEditor
 TEMPLATE = app
 
-
 SOURCES += main.cpp \
     widget/mainwindow.cpp \
     widget/palletewindow.cpp \
@@ -51,3 +50,10 @@ HEADERS  += globals.h \
 FORMS    += form/mainwindow.ui \
     form/palletewindow.ui \
     form/grpconfigdialog.ui
+
+copydata.commands = $(COPY_DIR) $$shell_quote($$shell_path($$PWD/../data)) \
+        $$shell_quote($$shell_path($${OUT_PWD}/data))
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata

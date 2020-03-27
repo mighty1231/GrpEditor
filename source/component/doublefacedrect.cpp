@@ -20,5 +20,5 @@ void DoubleFacedRect::drawPoint(int x, int y, char c)
             validRect = validRect.united(QRect(x, y, 1, 1));
         }
     }
-    newface[y][x] = c;
+    (*newface[y])[x] = c;
 }
