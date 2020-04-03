@@ -39,4 +39,4 @@ Starcraft graphics file (\*.grp) editor built on QT framework.
 
 ## License
 
-This project is licensed under the LGPL version 3 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the LGPL version 3 - see the [LICENSE](LICENSE) file for details
